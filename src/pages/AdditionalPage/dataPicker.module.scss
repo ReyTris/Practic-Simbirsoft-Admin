@@ -1,0 +1,11 @@
+.picker {
+    border: none;
+
+    .ant-picker-suffix {
+        display: none;
+    }
+
+    &:hover {
+        border: none;
+    }
+}
