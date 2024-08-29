@@ -1,6 +1,5 @@
 import Container from '@/components/Layout/Container';
 import Header from '@/components/Layout/Header';
-import Slider from '@/components/Slider';
 import { Button } from '@/components/ui/Button';
 import { Heading } from '@/components/ui/Heading';
 import { PathNames } from '@/router/pathNames';
@@ -41,7 +40,6 @@ export const MainPage = () => {
 					</div>
 				</Container>
 			</div>
-			<Slider className="w-2/5 xl:w-1/2 hidden lg:block relative" />
 		</div>
 	);
 };
