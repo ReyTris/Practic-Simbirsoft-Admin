@@ -1,7 +1,14 @@
+import { useAppDispatch } from '@/hooks/useDispatch';
+import { loginUser } from '@/store/userSlice';
 import { Button, Form, Input } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 
 const Login = () => {
+	const [login, setLogin] = useState('')
+	const [password, setPassword] = useState('')
+	const dispatch = useAppDispatch()
+
+
 	return (
 		<>
 			<div className="text-center text-[18px]">Вход</div>
@@ -18,18 +25,19 @@ const Login = () => {
 					rules={[
 						{
 							required: true,
-							type: 'email',
+							// type: 'email',
 							message: 'Введите в формате name@email.com',
 						},
 					]}
+					
 				>
-					<Input />
+					<Input onChange={(e) => setLogin(e.target.value)}/>
 				</Form.Item>
 				<Form.Item label="Пароль" name="Пароль" rules={[{ required: true }]}>
-					<Input.Password />
+					<Input.Password onChange={(e) => setPassword(e.target.value)} />
 				</Form.Item>
 				<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-					<Button type="primary" htmlType="submit">
+					<Button type="primary" onClick={() => dispatch(loginUser({login, password}))}>
 						Войти
 					</Button>
 				</Form.Item>
