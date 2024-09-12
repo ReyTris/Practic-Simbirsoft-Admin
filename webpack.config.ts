@@ -20,7 +20,7 @@ export default (env: EnvVariables) => {
 		output: {
 			path: path.resolve(__dirname, 'build'),
 			filename: 'build.[contenthash].js',
-			publicPath: '/Practic-Simbirsoft/',
+			publicPath: '/Practic-Simbirsoft-Admin/',
 			clean: true,
 		},
 		plugins: [
@@ -83,7 +83,7 @@ export default (env: EnvVariables) => {
 		devtool: 'inline-source-map',
 		devServer: {
 			port: env.port ?? 3000,
-			open: ['/Practic-Simbirsoft/'],
+			open: ['/Practic-Simbirsoft-Admin/'],
 			historyApiFallback: true,
 		},
 	};
