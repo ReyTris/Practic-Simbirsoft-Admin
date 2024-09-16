@@ -19,7 +19,7 @@ export const AuthService = {
     async login(username: string, password: string): Promise<AxiosResponse<IAuthResponse>> {
 
         return await $api.post('auth/login/', {
-            username, password
+            username: 'intern', password: 'intern-S!'
         }, {
             headers: {
                 'Authorization': `Basic ${basicToken}`

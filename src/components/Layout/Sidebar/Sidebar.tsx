@@ -38,10 +38,6 @@ export const Sidebar = () => {
 	const {pathname} = useLocation()
 	const navigate = useNavigate()
 	const selectedKey = getLastPathPart(pathname);
-
-	console.log(pathname);
-	
-	
 	
 	return (
 		<div className='w-[300px] h-[100vh] flex flex-col items-center shadow-sidebar'>
