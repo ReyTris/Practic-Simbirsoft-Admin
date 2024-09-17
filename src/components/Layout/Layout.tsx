@@ -1,25 +1,37 @@
-import OrderPage from '@/pages/OrderPage';
 import { PathNames } from '@/router/pathNames';
-import { useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import NavMenu from '../NavMenu/NavMenu';
+import { useEffect, useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import { useAppDispatch, useAppSelector } from '@/hooks/useDispatch';
+import { refreshToken } from '@/store/userSlice';
 
 export const Layout = () => {
-	const location = useLocation();
-	const path = location.pathname;
-	const [showMenu, setShowMenu] = useState<boolean>(false);
+	const navigate = useNavigate()
+	const [loading, setLoading] = useState(true)
 
-	const handlerNavMenu = () => {
-		setShowMenu(prev => !prev);
-	};
+	const { isLoading} = useAppSelector(state => state.user)
+	const dispatch = useAppDispatch()
+
+	useEffect(() => {
+		setLoading(isLoading)
+	}, [isLoading])
+
+	useEffect(() => {
+		if(localStorage.getItem('refreshToken')) {
+			dispatch(refreshToken())
+		} else {
+			navigate('/auth/login');
+		}
+	}, [ dispatch, navigate])
+
+	if (loading) {
+		return '...Загрузка'
+	}
 
 	return (
 		<main className='min-h-[100vh] flex overflow-hidden m-auto'>
-			<Sidebar isBurgerOpen={showMenu} handlerNavMenu={handlerNavMenu} />
-			{showMenu && <NavMenu handlerNavMenu={handlerNavMenu} />}
+			<Sidebar/>
 			<div className='flex-grow w-wrapper'>
-				{path.includes(PathNames.ORDER_PAGE) && <OrderPage />}
 				<Outlet />
 			</div>
 		</main>

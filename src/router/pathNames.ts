@@ -1,14 +1,10 @@
 export enum PathNames {
 	MAIN_PAGE = '/',
-	INSURANCE_PAGE = 'insurance',
-	GASOLINE_PAGE = 'gasoline',
-	PARKING_PAGE = 'parking',
-	SERVICE_PAGE = 'service',
-	ORDER_PAGE = 'order',
-	POSITION_PAGE = 'position',
-	MODEL_PAGE = 'model',
-	ADDITIONAL_PAGE = 'additional',
-	SUMMARY_PAGE = 'summary',
+	AUTH_PAGE = 'auth',
+	LOGIN_PAGE = 'login',
+	REGISTER_PAGE = 'register',
+	ORDERS_PAGE = 'orders',
+	ENTITIES_PAGE = 'entities'
 }
 
-export type PathNamesValues = typeof PathNames[keyof typeof PathNames];
+export type PathNamesValues = (typeof PathNames)[keyof typeof PathNames];

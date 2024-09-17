@@ -1,9 +1,9 @@
 {
-	"name": "practic_simbirsoft",
+	"name": "practic_simbirsoft_admin",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
-	"homepage": "https://gitname.github.io/Practic-Simbirsoft",
+	"homepage": "https://gitname.github.io/Practic-Simbirsoft-Admin",
 	"scripts": {
 		"build:dev": "webpack --env mode=development",
 		"build:prod": "webpack --env mode=production",

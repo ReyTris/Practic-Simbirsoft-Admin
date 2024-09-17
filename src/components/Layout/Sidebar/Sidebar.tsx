@@ -1,18 +1,55 @@
-import Burger from '@/components/Burger';
-import { Button } from '@/components/ui/Button';
+import {
+  CalendarOutlined,
+  LinkOutlined,
+  MailOutlined,
+} from '@ant-design/icons';
+import {  Menu } from 'antd';
+import type { GetProp, MenuProps } from 'antd';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { PathNames } from '@/router/pathNames';
+import { getLastPathPart } from '@/features/getLastPathPart';
 
-export interface SidebarProps {
-	handlerNavMenu: () => void;
-	isBurgerOpen: boolean;
-}
+import MainLogo from '@/assets/icons/main.svg'
 
-export const Sidebar = ({ handlerNavMenu, isBurgerOpen }: SidebarProps) => {
+
+type MenuItem = GetProp<MenuProps, 'items'>[number];
+
+const items: MenuItem[] = [
+	{
+		key: PathNames.ORDERS_PAGE,
+		icon: <LinkOutlined />,
+		label: 'Заказы',
+	},
+	{
+		key: PathNames.ENTITIES_PAGE,
+		icon: <MailOutlined />,
+		label: 'Сущности',
+	},
+	{
+		key: '2',
+		icon: <CalendarOutlined />,
+		label: 'Navigation Two',
+	},
+];
+
+
+export const Sidebar = () => {
+	
+	const {pathname} = useLocation()
+	const navigate = useNavigate()
+	const selectedKey = getLastPathPart(pathname);
+	
 	return (
-		<div className="flex flex-col items-center w-sidebar bg-[#151B1F] py-[32px] max-md:bg-transparent max-md:absolute">
-			<Burger handlerNavMenu={handlerNavMenu} isOpen={isBurgerOpen} />
-			<Button className="p-[10px] mt-auto max-lg:hidden text-main border-white rounded-[50%] transition-colors hover:border-2 hover:text-white active:text-main">
-				Eng
-			</Button>
+		<div className='w-[300px] h-[100vh] flex flex-col items-center shadow-sidebar'>
+			<div className='h-[70px] w-full flex items-center justify-center'>
+				<MainLogo />
+			</div>
+			<Menu
+				onClick={({key}) => navigate(key)}
+				selectedKeys={[selectedKey]}
+				items={items}
+				className='w-[300px]'
+			/>
 		</div>
 	);
 };

@@ -12,6 +12,9 @@ module.exports = {
 				grayLight: '#EEEEEE',
 				gray: '#999999',
 			},
+			boxShadow: {
+				sidebar: '10px 0px 10px rgba(0, 0, 0, 0.1)'
+			}
 		},
 	},
 	plugins: [],
