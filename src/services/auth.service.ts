@@ -1,6 +1,7 @@
 import { $api } from '@/api/api';
 import { IAuthResponse } from '@/models/auth/IAuthResponse';
 import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const secret = '4cbcea96de'
 
@@ -37,5 +38,17 @@ export const AuthService = {
                 'Authorization': `Basic ${basicToken}`
             }
         })
+    },
+
+    async logout() {
+        const navigate = useNavigate()
+        await $api.post('auth/logout/', {}, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
+        // navigate('/auth/login')
     }
 }
