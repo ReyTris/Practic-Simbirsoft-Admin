@@ -1,15 +1,41 @@
-import { IDataCar } from '@/services/entities.service';
+import { IDataCar } from '@/models/entities/IEntitiesService';
 import dayjs from 'dayjs';
-import React from 'react';
+import Checked from '@/assets/icons/checked.svg';
+import CheckBox from '@/assets/icons/checkbox.svg';
+import Apply from '@/assets/icons/apply.svg';
+import Close from '@/assets/icons/close.svg';
+import More from '@/assets/icons/more.svg';
+import cn from 'classnames';
+import { useNavigate } from 'react-router-dom';
+import { API_URL } from '@/api/api';
+import { PathNames } from '@/router/pathNames';
 
 interface IOrderItemProps {
 	item: IDataCar;
 }
 
 const OrderItem = ({ item }: IOrderItemProps) => {
-	const { color, carId, cityId, pointId, dateFrom, dateTo } = item;
+	const {
+		id,
+		color,
+		carId,
+		cityId,
+		pointId,
+		dateFrom,
+		dateTo,
+		price,
+		isFullTank,
+		isNeedChildChair,
+		isRightWheel,
+	} = item;
+
+	const navigate = useNavigate();
+
+	const handlerClickChange = (id: number) => {
+		navigate(`${PathNames.ORDER_DETAIL_PAGE}/${id}`);
+	};
 	return (
-		<div className="flex items-center py-4 px-5">
+		<div className="flex justify-between items-center py-4 px-5 border-t-[1px] border-[#E5E5E5]">
 			<div className="w-[140px] h-[60px]">
 				<img
 					className="w-full h-full object-cover"
@@ -19,13 +45,64 @@ const OrderItem = ({ item }: IOrderItemProps) => {
 					alt=""
 				/>
 			</div>
-			<div className="max-w-[280px] text-[#889098]">
+			<div className="max-w-[280px] text-[#889098] ml-4">
 				<div>
 					<span className="text-black">{carId.name}</span> в
 					<span className="text-black"> {cityId.name}</span>, {pointId.address}
 				</div>
 				<div>{dayjs(dateFrom).unix()}</div>
-				<div></div>
+				<div>
+					Цвет: <span className="text-black">{color}</span>
+				</div>
+			</div>
+
+			<div className="">
+				<div className="">
+					<div className="flex items-center">
+						{isFullTank ? <Checked /> : <CheckBox />}{' '}
+						<span
+							className={cn(isFullTank ? 'text-black' : 'text-gray', 'ml-2')}
+						>
+							Полный бак
+						</span>
+					</div>
+					<div className="flex items-center">
+						{isNeedChildChair ? <Checked /> : <CheckBox />}{' '}
+						<span
+							className={cn(
+								isNeedChildChair ? 'text-black' : 'text-gray',
+								'ml-2'
+							)}
+						>
+							Детское кресло
+						</span>
+					</div>
+					<div className="flex items-center">
+						{isRightWheel ? <Checked /> : <CheckBox />}{' '}
+						<span
+							className={cn(isRightWheel ? 'text-black' : 'text-gray', 'ml-2')}
+						>
+							Правый руль
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div className="text-[24px]">{price}</div>
+
+			<div className="flex border-gray border-[1px] rounded">
+				<button className="p-2 flex items-center text-[#5A6169] text-[11px]">
+					<Apply /> <span className="ml-1">Готово</span>
+				</button>
+				<button className="p-2 flex items-center text-[#5A6169] text-[11px] border-gray border-l">
+					<Close /> <span className="ml-1">Отмена</span>
+				</button>
+				<button
+					className="p-2 flex items-center text-[#5A6169] text-[11px] border-gray border-l"
+					onClick={() => handlerClickChange(id)}
+				>
+					<More /> <span className="ml-1">Изменить</span>
+				</button>
 			</div>
 		</div>
 	);

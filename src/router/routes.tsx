@@ -1,10 +1,10 @@
 import Layout from '@/components/Layout';
-import MainPage from '@/pages/MainPage';
 import { createHashRouter, Navigate } from 'react-router-dom';
 import { PathNames } from './pathNames';
 import AuthPage from '@/pages/AuthPage';
 import Login from '@/pages/AuthPage/components/Login';
 import OrdersPage from '@/pages/OrdersPage';
+import OrderDetailPage from '@/pages/OrderDetailPage';
 
 const routes = createHashRouter([
 	{
@@ -13,6 +13,7 @@ const routes = createHashRouter([
 		children: [
 			{ index: true, element: <Navigate to={PathNames.ORDERS_PAGE} /> },
 			{ path: PathNames.ORDERS_PAGE, element: <OrdersPage /> },
+			{ path: PathNames.ORDER_DETAIL_PAGE, element: <OrderDetailPage /> },
 		],
 	},
 	{

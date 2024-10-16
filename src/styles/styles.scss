@@ -58,6 +58,33 @@ h1 {
 	border-width: 2px;
 }
 
+.ant-pagination {
+	.ant-pagination-item {
+		a {
+			color: #007bff;
+		}
+		&.ant-pagination-item-active {
+			border-radius: 50%;
+			background-color: #007bff;
+
+			a {
+				color: white;
+			}
+		}
+	}
+
+	.ant-pagination-jump-next
+		.ant-pagination-item-container
+		.ant-pagination-item-ellipsis {
+		color: #007bff;
+	}
+	.ant-pagination-jump-prev
+		.ant-pagination-item-container
+		.ant-pagination-item-ellipsis {
+		color: #007bff;
+	}
+}
+
 @layer components {
 	.button {
 		min-height: 48px;

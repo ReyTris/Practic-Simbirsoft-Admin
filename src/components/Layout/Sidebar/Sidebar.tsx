@@ -1,13 +1,12 @@
-import {
-	CalendarOutlined,
-	LinkOutlined,
-	MailOutlined,
-} from '@ant-design/icons';
+import { LinkOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import type { GetProp, MenuProps } from 'antd';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PathNames } from '@/router/pathNames';
 import { getLastPathPart } from '@/features/getLastPathPart';
+
+import { OrderedListOutlined } from '@ant-design/icons';
+import { CarOutlined } from '@ant-design/icons';
 
 import MainLogo from '@/assets/icons/main.svg';
 
@@ -15,8 +14,13 @@ type MenuItem = GetProp<MenuProps, 'items'>[number];
 
 const items: MenuItem[] = [
 	{
+		key: PathNames.ORDER_DETAIL_PAGE,
+		icon: <CarOutlined />,
+		label: 'Карточка автомобиля',
+	},
+	{
 		key: PathNames.ORDERS_PAGE,
-		icon: <LinkOutlined />,
+		icon: <OrderedListOutlined />,
 		label: 'Заказы',
 	},
 ];
@@ -28,7 +32,7 @@ export const Sidebar = () => {
 
 	return (
 		<div className="w-[300px] h-[100vh] flex flex-col items-center shadow-sidebar z-10">
-			<div className="h-[70px] w-full flex items-center justify-center">
+			<div className="h-[70px] w-full flex items-center pl-12">
 				<MainLogo />
 			</div>
 			<Menu
