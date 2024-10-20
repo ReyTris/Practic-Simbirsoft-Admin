@@ -7,7 +7,6 @@ import Close from '@/assets/icons/close.svg';
 import More from '@/assets/icons/more.svg';
 import cn from 'classnames';
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from '@/api/api';
 import { PathNames } from '@/router/pathNames';
 
 interface IOrderItemProps {
@@ -34,6 +33,7 @@ const OrderItem = ({ item }: IOrderItemProps) => {
 	const handlerClickChange = (id: number) => {
 		navigate(`${PathNames.ORDER_DETAIL_PAGE}/${id}`);
 	};
+
 	return (
 		<div className="flex justify-between items-center py-4 px-5 border-t-[1px] border-[#E5E5E5]">
 			<div className="w-[140px] h-[60px]">
@@ -50,7 +50,12 @@ const OrderItem = ({ item }: IOrderItemProps) => {
 					<span className="text-black">{carId.name}</span> в
 					<span className="text-black"> {cityId.name}</span>, {pointId.address}
 				</div>
-				<div>{dayjs(dateFrom).unix()}</div>
+				<div>
+					{`${dayjs(Number(dateFrom)).format('DD.MM.YYYY HH:mm')} - ${dayjs(
+						Number(dateTo)
+					).format('DD.MM.YYYY HH:mm')}`}
+				</div>
+
 				<div>
 					Цвет: <span className="text-black">{color}</span>
 				</div>
@@ -88,7 +93,7 @@ const OrderItem = ({ item }: IOrderItemProps) => {
 				</div>
 			</div>
 
-			<div className="text-[24px]">{price}</div>
+			<div className="text-[24px]">{price} &#8381;</div>
 
 			<div className="flex border-gray border-[1px] rounded">
 				<button className="p-2 flex items-center text-[#5A6169] text-[11px]">
