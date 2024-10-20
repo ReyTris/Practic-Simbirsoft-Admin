@@ -13,7 +13,10 @@ const routes = createHashRouter([
 		children: [
 			{ index: true, element: <Navigate to={PathNames.ORDERS_PAGE} /> },
 			{ path: PathNames.ORDERS_PAGE, element: <OrdersPage /> },
-			{ path: PathNames.ORDER_DETAIL_PAGE, element: <OrderDetailPage /> },
+			{
+				path: `${PathNames.ORDER_DETAIL_PAGE}/:id?`,
+				element: <OrderDetailPage />,
+			},
 		],
 	},
 	{

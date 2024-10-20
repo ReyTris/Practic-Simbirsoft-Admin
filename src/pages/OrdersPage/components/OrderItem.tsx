@@ -31,7 +31,7 @@ const OrderItem = ({ item }: IOrderItemProps) => {
 	const navigate = useNavigate();
 
 	const handlerClickChange = (id: number) => {
-		navigate(`${PathNames.ORDER_DETAIL_PAGE}/${id}`);
+		navigate(`/${PathNames.ORDER_DETAIL_PAGE}/${id}`);
 	};
 
 	return (

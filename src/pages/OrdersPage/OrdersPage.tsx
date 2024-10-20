@@ -6,6 +6,8 @@ import { IEntitiesService } from '@/models/entities/IEntitiesService';
 export const OrdersPage = () => {
 	const [data, setData] = useState<IEntitiesService>({ data: [], count: 0 });
 	const [page, setPage] = useState(1);
+
+	const [limit, setLimit] = useState(10);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [cityFilter, setCityFilter] = useState('');
@@ -13,15 +15,25 @@ export const OrdersPage = () => {
 	const [brandFilter, setBrandFilter] = useState('');
 	const [filteredData, setFilteredData] = useState(data.data);
 
-	const handleCityChange = (value) => {
+	const uniqueCities = Array.from(
+		new Set(data.data.map((item) => item.cityId.name))
+	);
+
+	const uniqueColors = Array.from(new Set(data.data.map((item) => item.color)));
+
+	const uniqueBrands = Array.from(
+		new Set(data.data.map((item) => item.carId.name))
+	);
+
+	const handleCityChange = (value: string) => {
 		setCityFilter(value);
 	};
 
-	const handleColorChange = (value) => {
+	const handleColorChange = (value: string) => {
 		setColorFilter(value);
 	};
 
-	const handleBrandChange = (value) => {
+	const handleBrandChange = (value: string) => {
 		setBrandFilter(value);
 	};
 
@@ -56,24 +68,33 @@ export const OrdersPage = () => {
 		}
 		return originalElement;
 	};
+	const fetchData = async (page = 1, limit = 10) => {
+		setIsLoading(true);
+		try {
+			const response = await EntitiesService.getAllOrders(page, limit);
+			setData(response);
+			setFilteredData(response.data);
+		} catch (error) {
+			setData({ data: [], count: 0 });
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const onShowSizeChange: PaginationProps['onShowSizeChange'] = (
+		current,
+		pageSize
+	) => {
+		setPage(current);
+		setLimit(pageSize);
+		fetchData(current, pageSize);
+	};
 
 	useEffect(() => {
-		const fetchData = async () => {
-			setIsLoading(true);
-			try {
-				const response = await EntitiesService.getAllOrders(page);
-				setData(response);
-				setFilteredData(response.data);
-			} catch (error) {
-				setData({ data: [], count: 0 });
-			} finally {
-				setIsLoading(false);
-			}
-		};
-		fetchData();
+		fetchData(page, limit);
 	}, [page]);
 	return (
-		<div className="p-[30px]">
+		<div className="">
 			<h2 className="text-[29px] font-normal text-[#3D5170]">Заказы</h2>
 			<div className="mt-8 rounded-lg shadow-2xl">
 				<div className="py-4 px-5 flex justify-between">
@@ -83,11 +104,12 @@ export const OrdersPage = () => {
 							onChange={handleCityChange}
 							placeholder="Город"
 							style={{ width: 120 }}
+							className="ml-4"
 						>
 							<Select.Option value="">Все города</Select.Option>
-							{data.data.map((item) => (
-								<Select.Option key={item.cityId.name} value={item.cityId.name}>
-									{item.cityId.name}
+							{uniqueCities.map((city) => (
+								<Select.Option key={city} value={city}>
+									{city}
 								</Select.Option>
 							))}
 						</Select>
@@ -96,11 +118,12 @@ export const OrdersPage = () => {
 							onChange={handleColorChange}
 							placeholder="Цвет"
 							style={{ width: 120 }}
+							className="ml-4"
 						>
 							<Select.Option value="">Все цвета</Select.Option>
-							{data.data.map((item) => (
-								<Select.Option key={item.color} value={item.color}>
-									{item.color}
+							{uniqueColors.map((color) => (
+								<Select.Option key={color} value={color}>
+									{color}
 								</Select.Option>
 							))}
 						</Select>
@@ -109,11 +132,12 @@ export const OrdersPage = () => {
 							onChange={handleBrandChange}
 							placeholder="Марка"
 							style={{ width: 120 }}
+							className="ml-4"
 						>
 							<Select.Option value="">Все марки</Select.Option>
-							{data.data.map((item) => (
-								<Select.Option key={item.carId.name} value={item.carId.name}>
-									{item.carId.name}
+							{uniqueBrands.map((brand) => (
+								<Select.Option key={brand} value={brand}>
+									{brand}
 								</Select.Option>
 							))}
 						</Select>
@@ -144,6 +168,7 @@ export const OrdersPage = () => {
 						}}
 						className="py-[21px] border-t-[1px] border-[#E5E5E5] text-center"
 						itemRender={itemRender}
+						onShowSizeChange={onShowSizeChange}
 					/>
 				</div>
 			</div>

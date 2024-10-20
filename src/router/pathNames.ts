@@ -4,7 +4,7 @@ export enum PathNames {
 	LOGIN_PAGE = 'login',
 	REGISTER_PAGE = 'register',
 	ORDERS_PAGE = 'orders',
-	ORDER_DETAIL_PAGE = 'order-detail',
+	ORDER_DETAIL_PAGE = 'detail',
 }
 
 export type PathNamesValues = (typeof PathNames)[keyof typeof PathNames];
