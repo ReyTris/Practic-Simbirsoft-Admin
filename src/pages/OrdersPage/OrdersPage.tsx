@@ -16,6 +16,7 @@ import {
 } from '@/models/entities/IEntitiesService';
 import { useAppDispatch, useAppSelector } from '@/hooks/useDispatch';
 import { setFilters } from '@/store/OrderSlice';
+import Loader from '@/components/ui/Loader';
 export const OrdersPage = () => {
 	const [page, setPage] = useState(1);
 
@@ -57,18 +58,13 @@ export const OrdersPage = () => {
 	};
 
 	const handleApplyFilters = async () => {
-		try {
-			const response = await EntitiesService.getAllOrders(
-				page,
-				limit - 1,
-				filters.cityId,
-				filters.carId,
-				filters.orderStatusId
-			);
-			console.log(response);
-
-			setFilteredData(response);
-		} catch (error) {}
+		fetchData(
+			page,
+			limit - 1,
+			filters.cityId,
+			filters.carId,
+			filters.orderStatusId
+		);
 	};
 
 	const handleClearFilters = () => {
@@ -174,7 +170,6 @@ export const OrdersPage = () => {
 							style={{ width: 120 }}
 							className="ml-4"
 						>
-							<Select.Option value="">Все города</Select.Option>
 							{cities.data.map((city) => (
 								<Select.Option key={city.id} value={city.id}>
 									{city.name}
@@ -191,7 +186,6 @@ export const OrdersPage = () => {
 							style={{ width: 120 }}
 							className="ml-4"
 						>
-							<Select.Option value="">В процессе</Select.Option>
 							{orderStatus.data.map((status) => (
 								<Select.Option key={status.id} value={status.id}>
 									{status.name}
@@ -208,7 +202,6 @@ export const OrdersPage = () => {
 							style={{ width: 120 }}
 							className="ml-4"
 						>
-							<Select.Option value="">Все марки</Select.Option>
 							{cars.data.map((car) => (
 								<Select.Option key={car.id} value={car.id}>
 									{car.name}
@@ -240,23 +233,36 @@ export const OrdersPage = () => {
 							</Button>
 						</ConfigProvider>
 
-						<Button type="primary" onClick={handleApplyFilters}>
+						<Button
+							type="primary"
+							onClick={handleApplyFilters}
+							disabled={
+								!filters.cityId && !filters.carId && !filters.orderStatusId
+							}
+						>
 							Применить
 						</Button>
 					</div>
 				</div>
 				<div className="">
-					{isLoading
-						? 'Загрузка...'
-						: filteredData.data.map((item) => (
-								<OrderItem key={item.id} item={item} />
-						  ))}
+					{isLoading ? (
+						<div className="flex items-center justify-center py-14">
+							<Loader />
+						</div>
+					) : filteredData.data.length === 0 ? (
+						<div className="text-center text-[50px] py-10">
+							Ничего не найдено
+						</div>
+					) : (
+						filteredData.data.map((item) => (
+							<OrderItem key={item.id} item={item} />
+						))
+					)}
 					<Pagination
 						defaultCurrent={1}
 						total={filteredData.count}
 						onChange={(page) => {
 							setPage(page);
-							// handleCloseFilters();
 						}}
 						className="py-[21px] border-t-[1px] border-[#E5E5E5] text-center"
 						itemRender={itemRender}

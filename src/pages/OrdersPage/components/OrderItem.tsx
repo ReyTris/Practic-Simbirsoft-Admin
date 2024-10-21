@@ -33,7 +33,7 @@ const OrderItem = ({ item }: IOrderItemProps) => {
 	const navigate = useNavigate();
 
 	const handlerClickChange = (id: number) => {
-		navigate(`/${PathNames.ORDER_DETAIL_PAGE}/${id}`);
+		navigate(`/${PathNames.CAR_INFO_PAGE}/${carId.id}`);
 	};
 
 	return (

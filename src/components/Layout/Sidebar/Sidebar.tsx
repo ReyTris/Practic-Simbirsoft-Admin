@@ -14,7 +14,7 @@ type MenuItem = GetProp<MenuProps, 'items'>[number];
 
 const items: MenuItem[] = [
 	{
-		key: PathNames.ORDER_DETAIL_PAGE,
+		key: PathNames.CAR_INFO_PAGE,
 		icon: <CarOutlined />,
 		label: 'Карточка автомобиля',
 	},

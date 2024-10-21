@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useParams } from 'react-router-dom';
 
-export const OrderDetailPage = () => {
+export const CarInfoPage = () => {
 	const { id } = useParams();
 	const [data, setData] = useState<IDataCar>(null);
 	const [isLoading, setIsLoading] = useState(false);

@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useDispatch';
 import { refreshToken } from '@/store/userSlice';
 import Header from './Header';
 import Footer from './Footer';
+import Loader from '../ui/Loader';
 
 export const Layout = () => {
 	const navigate = useNavigate();
@@ -26,7 +27,11 @@ export const Layout = () => {
 	}, [dispatch, navigate]);
 
 	if (loading) {
-		return '...Загрузка';
+		return (
+			<div className="flex items-center justify-center py-14">
+				<Loader />
+			</div>
+		);
 	}
 
 	return (
