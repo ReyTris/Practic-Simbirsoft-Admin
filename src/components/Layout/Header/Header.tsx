@@ -27,7 +27,7 @@ export const Header = ({ className }: HeaderProps) => {
 				className
 			)}
 		>
-			<div className="mr-auto w-full mr-5">
+			<div className="w-full mr-5">
 				<Input
 					prefix={<SearchOutlined />}
 					placeholder="Поиск..."

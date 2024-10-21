@@ -1,4 +1,4 @@
-import { IDataCar } from '@/models/entities/IEntitiesService';
+import { ICarIdData, IDataCar } from '@/models/entities/IEntitiesService';
 import { EntitiesService } from '@/services/entities.service';
 import { Progress } from 'antd';
 import { useEffect, useState } from 'react';
@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 export const CarInfoPage = () => {
 	const { id } = useParams();
-	const [data, setData] = useState<IDataCar>(null);
+	const [data, setData] = useState<ICarIdData>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [image, setImage] = useState(null);
@@ -29,7 +29,7 @@ export const CarInfoPage = () => {
 		const fetchData = async () => {
 			setIsLoading(true);
 			try {
-				const response = await EntitiesService.getOrderToId(id);
+				const response = await EntitiesService.getCarOnId(Number(id));
 				setData(response);
 			} catch (error) {
 				setData(null);

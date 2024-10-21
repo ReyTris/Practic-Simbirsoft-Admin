@@ -78,26 +78,28 @@ export interface ICities extends IOrderStatus {}
 
 export interface ICarId {
 	count: number;
-	data: {
+	data: ICarIdData[];
+}
+
+export interface ICarIdData {
+	id: number;
+	name: string;
+	description: string;
+	number: string;
+	priceMin: number;
+	priceMax: number;
+	tank: string;
+	thumbnail: {
+		path: string;
+	};
+	createdAt: string;
+	updatedAt: string;
+	categoryId: {
 		id: number;
 		name: string;
 		description: string;
-		number: string;
-		priceMin: number;
-		priceMax: number;
-		tank: string;
-		thumbnail: {
-			path: string;
-		};
 		createdAt: string;
 		updatedAt: string;
-		categoryId: {
-			id: number;
-			name: string;
-			description: string;
-			createdAt: string;
-			updatedAt: string;
-		};
-		colors: string;
-	}[];
+	};
+	colors: string;
 }

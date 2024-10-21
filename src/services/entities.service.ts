@@ -1,6 +1,7 @@
 import { $api } from '@/api/api';
 import {
 	ICarId,
+	ICarIdData,
 	ICities,
 	IDataCar,
 	IEntitiesService,
@@ -31,16 +32,6 @@ export const EntitiesService = {
 		return response.data;
 	},
 
-	async getOrderToId(id: string): Promise<IDataCar> {
-		const response: AxiosResponse<any> = await $api.get(`/db/order/${id}`, {
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-			},
-		});
-
-		return response.data.data;
-	},
-
 	async getOrderStatus(): Promise<IOrderStatus> {
 		const response: AxiosResponse<any> = await $api.get(`/db/orderStatus`, {
 			headers: {
@@ -69,5 +60,15 @@ export const EntitiesService = {
 		});
 
 		return response.data;
+	},
+
+	async getCarOnId(id: number): Promise<ICarIdData> {
+		const response: AxiosResponse<any> = await $api.get(`/db/car/${id}`, {
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+			},
+		});
+
+		return response.data.data;
 	},
 };
