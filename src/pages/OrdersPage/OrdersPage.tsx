@@ -1,58 +1,80 @@
 import { EntitiesService } from '@/services/entities.service';
-import { Button, Pagination, PaginationProps, Select } from 'antd';
+import {
+	Button,
+	ConfigProvider,
+	Pagination,
+	PaginationProps,
+	Select,
+} from 'antd';
 import { useEffect, useState } from 'react';
 import OrderItem from './components/OrderItem';
-import { IEntitiesService } from '@/models/entities/IEntitiesService';
+import {
+	ICarId,
+	ICities,
+	IEntitiesService,
+	IOrderStatus,
+} from '@/models/entities/IEntitiesService';
+import { useAppDispatch, useAppSelector } from '@/hooks/useDispatch';
+import { setFilters } from '@/store/OrderSlice';
 export const OrdersPage = () => {
-	const [data, setData] = useState<IEntitiesService>({ data: [], count: 0 });
 	const [page, setPage] = useState(1);
 
 	const [limit, setLimit] = useState(10);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const [cityFilter, setCityFilter] = useState('');
-	const [colorFilter, setColorFilter] = useState('');
-	const [brandFilter, setBrandFilter] = useState('');
-	const [filteredData, setFilteredData] = useState(data.data);
+	const [orderFilters, setOrderFilters] = useState({
+		cityId: null,
+		carId: null,
+		orderStatusId: null,
+	});
 
-	const uniqueCities = Array.from(
-		new Set(data.data.map((item) => item.cityId.name))
-	);
+	const [filteredData, setFilteredData] = useState<IEntitiesService>({
+		data: [],
+		count: 0,
+	});
 
-	const uniqueColors = Array.from(new Set(data.data.map((item) => item.color)));
+	const [orderStatus, setOrderStatus] = useState<IOrderStatus>({
+		count: 0,
+		data: [],
+	});
+	const [cars, setCars] = useState<ICarId>({ count: 0, data: [] });
+	const [cities, setCities] = useState<ICities>({ data: [], count: 0 });
 
-	const uniqueBrands = Array.from(
-		new Set(data.data.map((item) => item.carId.name))
-	);
+	const dispatch = useAppDispatch();
 
-	const handleCityChange = (value: string) => {
-		setCityFilter(value);
+	const { filters } = useAppSelector((state) => state.order);
+
+	const handleCityChange = (value: number) => {
+		setOrderFilters((prev) => ({ ...prev, cityId: value }));
 	};
 
-	const handleColorChange = (value: string) => {
-		setColorFilter(value);
+	const handleStatusChange = (value: number) => {
+		setOrderFilters((prev) => ({ ...prev, orderStatusId: value }));
 	};
 
-	const handleBrandChange = (value: string) => {
-		setBrandFilter(value);
+	const handleBrandChange = (value: number) => {
+		setOrderFilters((prev) => ({ ...prev, carId: value }));
 	};
 
-	const handleApplyFilters = () => {
-		const filteredData = data.data.filter((item) => {
-			return (
-				(cityFilter === '' || item.cityId.name === cityFilter) &&
-				(colorFilter === '' || item.color === colorFilter) &&
-				(brandFilter === '' || item.carId.name === brandFilter)
+	const handleApplyFilters = async () => {
+		try {
+			const response = await EntitiesService.getAllOrders(
+				page,
+				limit - 1,
+				filters.cityId,
+				filters.carId,
+				filters.orderStatusId
 			);
-		});
-		setFilteredData(filteredData);
+			console.log(response);
+
+			setFilteredData(response);
+		} catch (error) {}
 	};
 
-	const handleCloseFilters = () => {
-		setCityFilter('');
-		setColorFilter('');
-		setBrandFilter('');
-		setFilteredData(data.data);
+	const handleClearFilters = () => {
+		dispatch(setFilters({ cityId: null, carId: null, orderStatusId: null }));
+		setOrderFilters({ cityId: null, carId: null, orderStatusId: null });
+		fetchData(page, limit - 1);
 	};
 
 	const itemRender: PaginationProps['itemRender'] = (
@@ -68,16 +90,44 @@ export const OrdersPage = () => {
 		}
 		return originalElement;
 	};
-	const fetchData = async (page = 1, limit = 10) => {
+	const fetchData = async (
+		page = 1,
+		limit = 10,
+		cityId?: number,
+		carId?: number,
+		orderStatusId?: number
+	) => {
 		setIsLoading(true);
 		try {
-			const response = await EntitiesService.getAllOrders(page, limit);
-			setData(response);
-			setFilteredData(response.data);
+			const response = await EntitiesService.getAllOrders(
+				page,
+				limit - 1,
+				cityId,
+				carId,
+				orderStatusId
+			);
+			setFilteredData(response);
 		} catch (error) {
-			setData({ data: [], count: 0 });
 		} finally {
 			setIsLoading(false);
+		}
+	};
+
+	const fetchEntities = async () => {
+		try {
+			const [orderStatus, carId, cityId] = await Promise.all([
+				EntitiesService.getOrderStatus(),
+				EntitiesService.getCarId(),
+				EntitiesService.getCityId(),
+			]);
+
+			setOrderStatus(orderStatus);
+			setCars(carId);
+			setCities(cityId);
+		} catch (error) {
+			setOrderStatus({ count: 0, data: [] });
+			setCars({ count: 0, data: [] });
+			setCities({ data: [], count: 0 });
 		}
 	};
 
@@ -87,69 +137,109 @@ export const OrdersPage = () => {
 	) => {
 		setPage(current);
 		setLimit(pageSize);
-		fetchData(current, pageSize);
+		fetchData(
+			current,
+			pageSize,
+			filters.cityId,
+			filters.carId,
+			filters.orderStatusId
+		);
 	};
 
 	useEffect(() => {
-		fetchData(page, limit);
+		fetchData(
+			page,
+			limit - 1,
+			filters.cityId,
+			filters.carId,
+			filters.orderStatusId
+		);
+		fetchEntities();
 	}, [page]);
 	return (
-		<div className="">
-			<h2 className="text-[29px] font-normal text-[#3D5170]">Заказы</h2>
-			<div className="mt-8 rounded-lg shadow-2xl">
+		<>
+			<h2 className="text-[29px] max-lg:text-[20px] font-normal text-[#3D5170]">
+				Заказы
+			</h2>
+			<div className="h-[calc(100vh_-_300px)] overflow-hidden overflow-y-auto mt-8 max-lg:mt-4 rounded-lg shadow-2xl">
 				<div className="py-4 px-5 flex justify-between">
 					<div className="">
 						<Select
-							value={cityFilter}
-							onChange={handleCityChange}
+							value={orderFilters.cityId}
+							onChange={(value) => {
+								handleCityChange(value);
+								dispatch(setFilters({ ...orderFilters, cityId: value }));
+							}}
 							placeholder="Город"
 							style={{ width: 120 }}
 							className="ml-4"
 						>
 							<Select.Option value="">Все города</Select.Option>
-							{uniqueCities.map((city) => (
-								<Select.Option key={city} value={city}>
-									{city}
+							{cities.data.map((city) => (
+								<Select.Option key={city.id} value={city.id}>
+									{city.name}
 								</Select.Option>
 							))}
 						</Select>
 						<Select
-							value={colorFilter}
-							onChange={handleColorChange}
-							placeholder="Цвет"
+							value={orderFilters.orderStatusId}
+							onChange={(value) => {
+								handleStatusChange(value);
+								dispatch(setFilters({ ...orderFilters, orderStatusId: value }));
+							}}
+							placeholder="Статус"
 							style={{ width: 120 }}
 							className="ml-4"
 						>
-							<Select.Option value="">Все цвета</Select.Option>
-							{uniqueColors.map((color) => (
-								<Select.Option key={color} value={color}>
-									{color}
+							<Select.Option value="">В процессе</Select.Option>
+							{orderStatus.data.map((status) => (
+								<Select.Option key={status.id} value={status.id}>
+									{status.name}
 								</Select.Option>
 							))}
 						</Select>
 						<Select
-							value={brandFilter}
-							onChange={handleBrandChange}
+							value={orderFilters.carId}
+							onChange={(value) => {
+								handleBrandChange(value);
+								dispatch(setFilters({ ...orderFilters, carId: value }));
+							}}
 							placeholder="Марка"
 							style={{ width: 120 }}
 							className="ml-4"
 						>
 							<Select.Option value="">Все марки</Select.Option>
-							{uniqueBrands.map((brand) => (
-								<Select.Option key={brand} value={brand}>
-									{brand}
+							{cars.data.map((car) => (
+								<Select.Option key={car.id} value={car.id}>
+									{car.name}
 								</Select.Option>
 							))}
 						</Select>
 					</div>
 					<div className="ml-auto">
-						<Button
-							type="default"
-							className="bg-red-600 text-white mr-4"
-							onClick={handleCloseFilters}
+						<ConfigProvider
+							theme={{
+								components: {
+									Button: {
+										defaultHoverBg: 'rgb(240 57 57)',
+										defaultHoverBorderColor: 'red-400',
+										defaultHoverColor: 'white',
+									},
+								},
+							}}
 						>
-							Отменить
-						</Button>
+							<Button
+								type="default"
+								className="bg-red-600 text-white mr-4"
+								onClick={handleClearFilters}
+								disabled={
+									!filters.cityId && !filters.carId && !filters.orderStatusId
+								}
+							>
+								Отменить
+							</Button>
+						</ConfigProvider>
+
 						<Button type="primary" onClick={handleApplyFilters}>
 							Применить
 						</Button>
@@ -158,13 +248,15 @@ export const OrdersPage = () => {
 				<div className="">
 					{isLoading
 						? 'Загрузка...'
-						: filteredData.map((item) => <OrderItem item={item} />)}
+						: filteredData.data.map((item) => (
+								<OrderItem key={item.id} item={item} />
+						  ))}
 					<Pagination
 						defaultCurrent={1}
-						total={data.count}
+						total={filteredData.count}
 						onChange={(page) => {
 							setPage(page);
-							handleCloseFilters();
+							// handleCloseFilters();
 						}}
 						className="py-[21px] border-t-[1px] border-[#E5E5E5] text-center"
 						itemRender={itemRender}
@@ -172,6 +264,6 @@ export const OrdersPage = () => {
 					/>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };

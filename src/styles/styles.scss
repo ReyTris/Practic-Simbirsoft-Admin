@@ -58,6 +58,9 @@ h1 {
 	border-width: 2px;
 }
 
+
+
+//pagination
 .ant-pagination {
 	.ant-pagination-item {
 		a {
@@ -98,5 +101,9 @@ h1 {
 	h1 {
 		font-size: 32px;
 		line-height: 32px;
+	}
+
+	.ant-menu .ant-menu-title-content {
+		display: none;
 	}
 }

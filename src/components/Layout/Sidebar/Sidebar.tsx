@@ -1,5 +1,5 @@
 import { LinkOutlined } from '@ant-design/icons';
-import { Menu } from 'antd';
+import { ConfigProvider, Menu } from 'antd';
 import type { GetProp, MenuProps } from 'antd';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PathNames } from '@/router/pathNames';
@@ -31,16 +31,27 @@ export const Sidebar = () => {
 	const selectedKey = getLastPathPart(pathname);
 
 	return (
-		<div className="w-[300px] h-[100vh] flex flex-col items-center shadow-sidebar z-10">
+		<div className="w-[300px] max-lg:w-[50px] h-[100vh] flex flex-col items-center shadow-sidebar z-10 bg-white">
 			<div className="h-[70px] w-full flex items-center pl-12">
 				<MainLogo />
 			</div>
-			<Menu
-				onClick={({ key }) => navigate(key)}
-				selectedKeys={[selectedKey]}
-				items={items}
-				className="w-[300px]"
-			/>
+
+			<ConfigProvider
+				theme={{
+					components: {
+						Menu: {
+							itemSelectedBg: 'white',
+						},
+					},
+				}}
+			>
+				<Menu
+					onClick={({ key }) => navigate(key)}
+					selectedKeys={[selectedKey]}
+					items={items}
+					className="w-full"
+				/>
+			</ConfigProvider>
 		</div>
 	);
 };

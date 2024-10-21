@@ -16,7 +16,7 @@ export interface IDataCar {
 	rateId: Rate;
 }
 
-interface City {
+export interface City {
 	id: number;
 	name: string;
 	createdAt: string;
@@ -32,7 +32,7 @@ interface Point {
 	updatedAt: string;
 }
 
-interface Car {
+export interface Car {
 	id: number;
 	priceMax: number;
 	priceMin: number;
@@ -62,4 +62,42 @@ interface Rate {
 export interface IEntitiesService {
 	data: IDataCar[];
 	count: number;
+}
+
+export interface IOrderStatus {
+	count: number;
+	data: {
+		id: number;
+		name: string;
+		createdAt: string;
+		updatedAt: string;
+	}[];
+}
+
+export interface ICities extends IOrderStatus {}
+
+export interface ICarId {
+	count: number;
+	data: {
+		id: number;
+		name: string;
+		description: string;
+		number: string;
+		priceMin: number;
+		priceMax: number;
+		tank: string;
+		thumbnail: {
+			path: string;
+		};
+		createdAt: string;
+		updatedAt: string;
+		categoryId: {
+			id: number;
+			name: string;
+			description: string;
+			createdAt: string;
+			updatedAt: string;
+		};
+		colors: string;
+	}[];
 }

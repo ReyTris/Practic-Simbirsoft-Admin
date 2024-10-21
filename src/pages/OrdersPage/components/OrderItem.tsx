@@ -9,6 +9,8 @@ import cn from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { PathNames } from '@/router/pathNames';
 
+import AbstractCar from '@/assets/images/abstractCar.png';
+
 interface IOrderItemProps {
 	item: IDataCar;
 }
@@ -35,13 +37,17 @@ const OrderItem = ({ item }: IOrderItemProps) => {
 	};
 
 	return (
-		<div className="flex justify-between items-center py-4 px-5 border-t-[1px] border-[#E5E5E5]">
+		<div className="flex justify-between items-center gap-8 flex-wrap py-4 px-5 max-lg:p-2 border-t-[1px] border-[#E5E5E5]">
 			<div className="w-[140px] h-[60px]">
 				<img
 					className="w-full h-full object-cover"
 					width="140"
 					height="60"
-					src={carId.thumbnail.path}
+					src={
+						!carId.thumbnail.path.includes('blob')
+							? carId.thumbnail.path
+							: AbstractCar
+					}
 					alt=""
 				/>
 			</div>

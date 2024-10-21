@@ -23,7 +23,7 @@ export const Header = ({ className }: HeaderProps) => {
 	return (
 		<div
 			className={cn(
-				'relative w-full h-[68px] px-[22px] py-[12px] flex items-center justify-end shadow-header z-10',
+				'relative w-full h-[68px] px-[22px] py-[12px] flex items-center justify-end shadow-header z-10 bg-white',
 				className
 			)}
 		>
@@ -34,10 +34,10 @@ export const Header = ({ className }: HeaderProps) => {
 					className="border-none w-full"
 				/>
 			</div>
-			<div className="flex items-center justify-center w-[70px] p-5 border-x border-[#CACEDB]">
+			<div className="flex items-center justify-center w-[70px] p-5 max-md:p-2 border-x border-[#CACEDB]">
 				<Jingle className="cursor-pointer" />
 			</div>
-			<div className="p-6">
+			<div className="p-6 max-md:p-2">
 				<Dropdown
 					menu={{ items }}
 					trigger={['click']}
@@ -45,7 +45,7 @@ export const Header = ({ className }: HeaderProps) => {
 				>
 					<a onClick={(e) => e.preventDefault()}>
 						<Space>
-							<div className="w-[40px] h-[40px] rounded-full">
+							<div className="w-[40px] h-[40px] rounded-full max-md:w-[0]">
 								<img
 									className=" w-full h-full object-cover rounded-full"
 									src="../../../assets/images/user-avatar.png"

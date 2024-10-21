@@ -1,11 +1,27 @@
 import { $api } from '@/api/api';
-import { IDataCar, IEntitiesService } from '@/models/entities/IEntitiesService';
+import {
+	ICarId,
+	ICities,
+	IDataCar,
+	IEntitiesService,
+	IOrderStatus,
+} from '@/models/entities/IEntitiesService';
 import { AxiosResponse } from 'axios';
 
 export const EntitiesService = {
-	async getAllOrders(page: number, limit: number): Promise<IEntitiesService> {
+	async getAllOrders(
+		page: number,
+		limit: number,
+		cityId?: number,
+		carId?: number,
+		orderStatusId?: number
+	): Promise<IEntitiesService> {
 		const response: AxiosResponse<any> = await $api.get(
-			`/db/order?page=${page}&limit=${limit}`,
+			`/db/order?page=${page}&limit=${limit}${
+				cityId ? `&cityId=${cityId}` : ''
+			}${carId ? `&carId=${carId}` : ''}${
+				orderStatusId ? `&orderStatusId=${orderStatusId}` : ''
+			}`,
 			{
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -22,8 +38,36 @@ export const EntitiesService = {
 			},
 		});
 
-		// console.log(response.data);
-
 		return response.data.data;
+	},
+
+	async getOrderStatus(): Promise<IOrderStatus> {
+		const response: AxiosResponse<any> = await $api.get(`/db/orderStatus`, {
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+			},
+		});
+
+		return response.data;
+	},
+
+	async getCarId(): Promise<ICarId> {
+		const response: AxiosResponse<any> = await $api.get(`/db/car`, {
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+			},
+		});
+
+		return response.data;
+	},
+
+	async getCityId(): Promise<ICities> {
+		const response: AxiosResponse<any> = await $api.get(`/db/city`, {
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+			},
+		});
+
+		return response.data;
 	},
 };
