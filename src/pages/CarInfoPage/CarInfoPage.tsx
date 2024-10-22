@@ -9,7 +9,7 @@ interface ICarInfo {
 	name: string;
 	type: string;
 	description: string;
-	colors: string[];
+	colors: any[];
 	image: string;
 }
 
@@ -32,9 +32,22 @@ export const CarInfoPage = () => {
 	});
 
 	console.log(carInfo);
+	console.log(id);
 
 	const handleColorChange = (value: string) => {
 		colorRef.current = value;
+	};
+
+	const handleNameChange = (value: string) => {
+		setCarInfo((prev) => ({ ...prev, name: value }));
+	};
+
+	const handleTypeChange = (value: string) => {
+		setCarInfo((prev) => ({ ...prev, type: value }));
+	};
+
+	const handleDescriptionChange = (value: string) => {
+		setCarInfo((prev) => ({ ...prev, description: value }));
 	};
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -50,7 +63,6 @@ export const CarInfoPage = () => {
 	const handleRemoveImage = () => {
 		setImage(null);
 	};
-	console.log(data);
 
 	const handleAddColor = () => {
 		setCarInfo((prev) => ({
@@ -61,29 +73,43 @@ export const CarInfoPage = () => {
 		setCheckedColors((prev) => [...prev, colorRef.current]);
 	};
 	useEffect(() => {
-		const fetchData = async () => {
-			setIsLoading(true);
-			try {
-				const response = await EntitiesService.getCarOnId(Number(id));
+		if (id === undefined) {
+			// Reset the state when id becomes undefined
+			setCarInfo({
+				name: '',
+				type: '',
+				description: '',
+				colors: [],
+				image: '',
+			});
+			setImage(null);
+			setCheckedColors([]);
+		} else {
+			const fetchData = async () => {
+				setIsLoading(true);
+				try {
+					const response = await EntitiesService.getCarOnId(Number(id));
 
-				setCarInfo((prev) => ({
-					...prev,
-					colors: [...prev.colors, response.colors],
-				}));
+					setCarInfo((prev) => ({
+						...prev,
+						colors: [...prev.colors, response.colors || []],
+						name: response.name,
+						type: response.categoryId.name,
+						description: response.description,
+						image: response.thumbnail.path,
+					}));
 
-				setCheckedColors((prev) => [...prev, response.colors]);
-				setData(response);
-			} catch (error) {
-				setData(null);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		if (id) {
+					setCheckedColors((prev) => [...prev, response.colors]);
+					setData(response);
+				} catch (error) {
+					setData(null);
+				} finally {
+					setIsLoading(false);
+				}
+			};
 			fetchData();
 		}
-	}, []);
+	}, [id]);
 
 	return (
 		<div className="">
@@ -99,6 +125,14 @@ export const CarInfoPage = () => {
 									<img
 										className="w-full object-cover"
 										src={URL.createObjectURL(image)}
+										alt="Uploaded image"
+									/>
+								</div>
+							) : carInfo.image ? (
+								<div className="w-full">
+									<img
+										className="w-full object-cover"
+										src={carInfo.image}
 										alt="Uploaded image"
 									/>
 								</div>
@@ -145,12 +179,9 @@ export const CarInfoPage = () => {
 							id=""
 							rows={10}
 							cols={30}
-						>
-							Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et at
-							voluptatum obcaecati debitis optio, nam voluptate corrupti ducimus
-							quidem expedita consequatur, autem vitae nemo dolorem! Nemo
-							repellat consequatur iure vel, vero ab facere accusantium
-						</textarea>
+							onChange={(e) => handleDescriptionChange(e.target.value)}
+							value={carInfo.description}
+						/>
 					</div>
 				</div>
 				<div className="flex-1 rounded-lg shadow-2xl w-full p-6 bg-white">
@@ -164,6 +195,8 @@ export const CarInfoPage = () => {
 								<input
 									type="text"
 									className="p-[10px] outline-none w-full h-[30px]"
+									value={carInfo.name}
+									onChange={(e) => handleNameChange(e.target.value)}
 								/>
 							</div>
 						</div>
@@ -173,6 +206,8 @@ export const CarInfoPage = () => {
 								<input
 									type="text"
 									className="p-[10px] outline-none  w-full h-[30px]"
+									value={carInfo.type}
+									onChange={(e) => handleTypeChange(e.target.value)}
 								/>
 							</div>
 						</div>
