@@ -1,16 +1,42 @@
 import { ICarIdData, IDataCar } from '@/models/entities/IEntitiesService';
 import { EntitiesService } from '@/services/entities.service';
-import { Progress } from 'antd';
-import { useEffect, useState } from 'react';
+import { Checkbox, Progress } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useParams } from 'react-router-dom';
 
+interface ICarInfo {
+	name: string;
+	type: string;
+	description: string;
+	colors: string[];
+	image: string;
+}
+
 export const CarInfoPage = () => {
 	const { id } = useParams();
+
 	const [data, setData] = useState<ICarIdData>(null);
 	const [isLoading, setIsLoading] = useState(false);
-
 	const [image, setImage] = useState(null);
+	const [checkedColors, setCheckedColors] = useState([]);
+
+	const colorRef = useRef<string>(null);
+
+	const [carInfo, setCarInfo] = useState<ICarInfo>({
+		name: '',
+		type: '',
+		description: '',
+		colors: [],
+		image: '',
+	});
+
+	console.log(carInfo);
+
+	const handleColorChange = (value: string) => {
+		colorRef.current = value;
+	};
+
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop: (acceptedFiles) => {
 			setImage(acceptedFiles[0]);
@@ -20,16 +46,32 @@ export const CarInfoPage = () => {
 	// const handleImageChange = (event) => {
 	// 	setImage(event.target.files[0]);
 	// };
+
 	const handleRemoveImage = () => {
 		setImage(null);
 	};
 	console.log(data);
 
+	const handleAddColor = () => {
+		setCarInfo((prev) => ({
+			...prev,
+			colors: [...prev.colors, colorRef.current],
+		}));
+
+		setCheckedColors((prev) => [...prev, colorRef.current]);
+	};
 	useEffect(() => {
 		const fetchData = async () => {
 			setIsLoading(true);
 			try {
 				const response = await EntitiesService.getCarOnId(Number(id));
+
+				setCarInfo((prev) => ({
+					...prev,
+					colors: [...prev.colors, response.colors],
+				}));
+
+				setCheckedColors((prev) => [...prev, response.colors]);
 				setData(response);
 			} catch (error) {
 				setData(null);
@@ -37,8 +79,12 @@ export const CarInfoPage = () => {
 				setIsLoading(false);
 			}
 		};
-		fetchData();
+
+		if (id) {
+			fetchData();
+		}
 	}, []);
+
 	return (
 		<div className="">
 			<h2 className="text-[29px] font-normal text-[#3D5170]">
@@ -136,10 +182,35 @@ export const CarInfoPage = () => {
 								<input
 									type="text"
 									className="p-[10px] outline-none w-full  rounded border-[0.5px] border-[#BECAD6] h-[30px]"
+									onChange={(e) => handleColorChange(e.target.value)}
 								/>
-								<button className="flex items-center justify-center p-[7px] text-[36px] text-[#BECAD6] font-normal w-[30px] h-[30px] rounded border-[0.5px] border-[#BECAD6]">
+								<button
+									className="flex items-center justify-center p-[7px] text-[36px] text-[#BECAD6] font-normal w-[30px] h-[30px] rounded border-[0.5px] border-[#BECAD6]"
+									onClick={() => handleAddColor()}
+								>
 									+
 								</button>
+							</div>
+							<div className="flex flex-col">
+								{carInfo.colors.map((color) => (
+									<Checkbox
+										className="custom-checkbox mt-2"
+										value={color}
+										key={color}
+										checked={checkedColors.includes(color)}
+										onChange={() => {
+											if (checkedColors.includes(color)) {
+												setCheckedColors(
+													checkedColors.filter((c) => c !== color)
+												);
+											} else {
+												setCheckedColors([...checkedColors, color]);
+											}
+										}}
+									>
+										{color}
+									</Checkbox>
+								))}
 							</div>
 						</div>
 					</div>
