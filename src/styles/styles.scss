@@ -53,9 +53,32 @@ h1 {
 	}
 }
 
-.ant-checkbox-checked .ant-checkbox-inner:after {
-	border-color: var(--main-color);
-	border-width: 2px;
+//pagination
+.ant-pagination {
+	.ant-pagination-item {
+		a {
+			color: #007bff;
+		}
+		&.ant-pagination-item-active {
+			border-radius: 50%;
+			background-color: #007bff;
+
+			a {
+				color: white;
+			}
+		}
+	}
+
+	.ant-pagination-jump-next
+		.ant-pagination-item-container
+		.ant-pagination-item-ellipsis {
+		color: #007bff;
+	}
+	.ant-pagination-jump-prev
+		.ant-pagination-item-container
+		.ant-pagination-item-ellipsis {
+		color: #007bff;
+	}
 }
 
 @layer components {
@@ -71,5 +94,9 @@ h1 {
 	h1 {
 		font-size: 32px;
 		line-height: 32px;
+	}
+
+	.ant-menu .ant-menu-title-content {
+		display: none;
 	}
 }

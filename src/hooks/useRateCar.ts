@@ -1,4 +1,4 @@
-import { CarService } from '@/services/car.service';
+import { CarService } from '@/services/entities.service';
 import { useEffect, useState } from 'react';
 
 export interface IRateCar {
