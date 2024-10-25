@@ -35,7 +35,7 @@ export const Layout = () => {
 	}
 
 	return (
-		<main className="min-h-[100vh] flex overflow-hidden m-auto bg-[#F5F6F8]">
+		<main className="min-h-[100vh] flex  m-auto bg-[#F5F6F8]">
 			<Sidebar />
 			<div className="flex flex-col flex-grow w-wrapper">
 				<Header />

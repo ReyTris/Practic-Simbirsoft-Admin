@@ -101,5 +101,5 @@ export interface ICarIdData {
 		createdAt: string;
 		updatedAt: string;
 	};
-	colors: string;
+	colors: string[];
 }

@@ -1,20 +1,31 @@
-import { ICarIdData, IDataCar } from '@/models/entities/IEntitiesService';
+import { ICarIdData } from '@/models/entities/IEntitiesService';
+import { PathNames } from '@/router/pathNames';
 import { EntitiesService } from '@/services/entities.service';
-import { Checkbox, Progress } from 'antd';
+import { Button, Checkbox, ConfigProvider, Progress } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface ICarInfo {
 	name: string;
-	type: string;
+	categoryId: {
+		name: string;
+	};
 	description: string;
-	colors: any[];
-	image: string;
+	colors: string[];
+	thumbnail: {
+		path: string;
+	};
 }
 
 export const CarInfoPage = () => {
 	const { id } = useParams();
+	const navigate = useNavigate();
+	var _ = require('lodash');
+
+	const [message, setMessage] = useState('');
+	const [reqStatus, setReqStatus] = useState(false);
+	console.log(message);
 
 	const [data, setData] = useState<ICarIdData>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -25,14 +36,18 @@ export const CarInfoPage = () => {
 
 	const [carInfo, setCarInfo] = useState<ICarInfo>({
 		name: '',
-		type: '',
+		categoryId: {
+			name: '',
+		},
 		description: '',
-		colors: [],
-		image: '',
+		colors: [''],
+		thumbnail: {
+			path: '',
+		},
 	});
 
 	console.log(carInfo);
-	console.log(id);
+	console.log(data);
 
 	const handleColorChange = (value: string) => {
 		colorRef.current = value;
@@ -43,26 +58,52 @@ export const CarInfoPage = () => {
 	};
 
 	const handleTypeChange = (value: string) => {
-		setCarInfo((prev) => ({ ...prev, type: value }));
+		setCarInfo((prev) => ({ ...prev, categoryId: { name: value } }));
 	};
 
 	const handleDescriptionChange = (value: string) => {
 		setCarInfo((prev) => ({ ...prev, description: value }));
 	};
 
+	const handleDeleteCar = async () => {
+		try {
+			const result = await EntitiesService.deleteCar(Number(id));
+			if (result.success) {
+				setTimeout(() => {
+					navigate(`/${PathNames.CAR_INFO_PAGE}`);
+				}, 1500);
+			}
+
+			setMessage(result.message);
+		} catch (error) {
+			if (error.includes('referenced from table')) {
+				console.error(error);
+			}
+		}
+	};
+
+	const handleUpdateCar = async () => {
+		try {
+			const updatedBody = _.merge(data, carInfo);
+
+			const result = await EntitiesService.updateCar(Number(id), updatedBody);
+			setMessage(result.message);
+		} catch (error) {}
+	};
+
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop: (acceptedFiles) => {
+			console.log(acceptedFiles[0]);
+
 			setImage(acceptedFiles[0]);
+			setCarInfo((prev) => ({
+				...prev,
+				thumbnail: {
+					path: acceptedFiles[0].name,
+				},
+			}));
 		},
 	});
-
-	// const handleImageChange = (event) => {
-	// 	setImage(event.target.files[0]);
-	// };
-
-	const handleRemoveImage = () => {
-		setImage(null);
-	};
 
 	const handleAddColor = () => {
 		setCarInfo((prev) => ({
@@ -70,17 +111,23 @@ export const CarInfoPage = () => {
 			colors: [...prev.colors, colorRef.current],
 		}));
 
-		setCheckedColors((prev) => [...prev, colorRef.current]);
+		setCheckedColors((prev) => {
+			console.log(prev, colorRef.current);
+			return [...prev, colorRef.current];
+		});
 	};
 	useEffect(() => {
 		if (id === undefined) {
-			// Reset the state when id becomes undefined
 			setCarInfo({
 				name: '',
-				type: '',
+				categoryId: {
+					name: '',
+				},
 				description: '',
-				colors: [],
-				image: '',
+				colors: [''],
+				thumbnail: {
+					path: '',
+				},
 			});
 			setImage(null);
 			setCheckedColors([]);
@@ -92,12 +139,26 @@ export const CarInfoPage = () => {
 
 					setCarInfo((prev) => ({
 						...prev,
-						colors: [...prev.colors, response.colors || []],
+						colors:
+							typeof response.colors === 'string'
+								? [response.colors]
+								: response.colors,
 						name: response.name,
-						type: response.categoryId.name,
+						categoryId: {
+							...prev.categoryId,
+							name: response.categoryId.name,
+						},
 						description: response.description,
-						image: response.thumbnail.path,
+						thumbnail: {
+							path: response.thumbnail.path,
+						},
 					}));
+
+					setCheckedColors(response.colors);
+
+					if (response === null) {
+						navigate('*');
+					}
 
 					setCheckedColors((prev) => [...prev, response.colors]);
 					setData(response);
@@ -116,65 +177,67 @@ export const CarInfoPage = () => {
 			<h2 className="text-[29px] font-normal text-[#3D5170]">
 				Карточка автомобиля
 			</h2>
-			<div className="mt-8 flex gap-7">
-				<div className="rounded-lg shadow-2xl w-[330px] p-6 flex flex-col bg-white">
-					<div className="py-5">
-						<div className="">
-							{image ? (
-								<div className="w-full">
-									<img
-										className="w-full object-cover"
-										src={URL.createObjectURL(image)}
-										alt="Uploaded image"
-									/>
-								</div>
-							) : carInfo.image ? (
-								<div className="w-full">
-									<img
-										className="w-full object-cover"
-										src={carInfo.image}
-										alt="Uploaded image"
-									/>
-								</div>
-							) : (
-								<div className="flex items-center justify-center text-[200px]">
-									?
-								</div>
-							)}
-
-							<div className="text-center text-[24px]">Name car</div>
-						</div>
-
-						<div {...getRootProps()} className="dropzone">
-							<input {...getInputProps()} />
-
-							<div className="mt-2">
-								{isDragActive ? (
-									<p>Drop the image here ...</p>
-								) : (
-									<div className="flex rounded border-[0.5px] border-[#BECAD6]">
-										<input
-											className="p-2 outline-none"
-											type="text"
-											placeholder="Выберите файл"
+			<div className="mt-8 flex gap-7 h-[calc(100vh_-_300px)] max-md:flex-col">
+				<div className="rounded-lg shadow-2xl w-[330px] max-md:w-full p-6 flex flex-col gap-5 max-md:flex-row bg-white">
+					<div className="">
+						<div className="py-5">
+							<div className="">
+								{image ? (
+									<div className="w-full">
+										<img
+											className="w-full object-cover"
+											src={URL.createObjectURL(image)}
+											alt="Uploaded image"
 										/>
-										<button className="p-2 bg-[#E9ECEF] border-[#BECAD6] border-l-[0.5px] flex-1">
-											Обзор
-										</button>
+									</div>
+								) : carInfo.thumbnail.path ? (
+									<div className="w-full">
+										<img
+											className="w-full object-cover"
+											src={carInfo.thumbnail.path}
+											alt="Uploaded image"
+										/>
+									</div>
+								) : (
+									<div className="flex items-center justify-center text-[200px]">
+										?
 									</div>
 								)}
+
+								<div className="text-center text-[24px]">Name car</div>
+							</div>
+
+							<div {...getRootProps()} className="dropzone">
+								<input {...getInputProps()} />
+
+								<div className="mt-2">
+									{isDragActive ? (
+										<p>Drop the image here ...</p>
+									) : (
+										<div className="flex rounded border-[0.5px] border-[#BECAD6]">
+											<input
+												className="p-2 outline-none"
+												type="text"
+												placeholder="Выберите файл"
+											/>
+											<button className="p-2 bg-[#E9ECEF] border-[#BECAD6] border-l-[0.5px] flex-1">
+												Обзор
+											</button>
+										</div>
+									)}
+								</div>
 							</div>
 						</div>
-					</div>
 
-					<div className="py-4 border-t border-[#BECAD6]">
-						<span className="text-[#868E96]">Заполнено</span>
-						<Progress percent={50} />
+						<div className="py-4 border-t border-[#BECAD6]">
+							<span className="text-[#868E96]">Заполнено</span>
+							<Progress percent={50} />
+						</div>
 					</div>
 					<div className="py-4 border-t border-[#BECAD6]">
 						<span className="text-[#868E96]">Описание</span>
 						<textarea
-							className="mt-3 outline-none"
+							className="mt-3 outline-none resize-none"
 							name=""
 							id=""
 							rows={10}
@@ -184,7 +247,7 @@ export const CarInfoPage = () => {
 						/>
 					</div>
 				</div>
-				<div className="flex-1 rounded-lg shadow-2xl w-full p-6 bg-white">
+				<div className="flex-1 flex flex-col rounded-lg shadow-2xl w-full p-6 bg-white">
 					<h3 className="text-[#3D5170] text-[17px] font-medium">
 						Настройка автомобиля
 					</h3>
@@ -206,7 +269,7 @@ export const CarInfoPage = () => {
 								<input
 									type="text"
 									className="p-[10px] outline-none  w-full h-[30px]"
-									value={carInfo.type}
+									value={carInfo.categoryId.name}
 									onChange={(e) => handleTypeChange(e.target.value)}
 								/>
 							</div>
@@ -227,11 +290,11 @@ export const CarInfoPage = () => {
 								</button>
 							</div>
 							<div className="flex flex-col">
-								{carInfo.colors.map((color) => (
+								{carInfo.colors.map((color, id) => (
 									<Checkbox
 										className="custom-checkbox mt-2"
 										value={color}
-										key={color}
+										key={id}
 										checked={checkedColors.includes(color)}
 										onChange={() => {
 											if (checkedColors.includes(color)) {
@@ -248,6 +311,38 @@ export const CarInfoPage = () => {
 								))}
 							</div>
 						</div>
+					</div>
+					<div className="mt-auto flex gap-3">
+						<Button type="primary" onClick={handleUpdateCar}>
+							Сохранить
+						</Button>
+						<Button type="default" onClick={() => {}}>
+							Отменить
+						</Button>
+
+						<ConfigProvider
+							theme={{
+								components: {
+									Button: {
+										defaultHoverBg: 'rgb(240 57 57)',
+										defaultHoverBorderColor: 'red-400',
+										defaultHoverColor: 'white',
+									},
+								},
+							}}
+						>
+							{id !== undefined && (
+								<Button
+									type="default"
+									className="bg-red-600 text-white ml-auto"
+									onClick={() => {
+										handleDeleteCar();
+									}}
+								>
+									Удалить
+								</Button>
+							)}
+						</ConfigProvider>
 					</div>
 				</div>
 			</div>
