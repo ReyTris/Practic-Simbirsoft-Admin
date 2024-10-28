@@ -3,6 +3,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface IInitialState {
 	filters: IStateFilter;
+	message: {
+		status: boolean;
+		message: string;
+		color: string;
+	};
 }
 
 export interface IStateFilter {
@@ -16,6 +21,11 @@ const initialState: IInitialState = {
 		cityId: null,
 		orderStatusId: null,
 	},
+	message: {
+		status: false,
+		message: '',
+		color: '',
+	},
 };
 
 export const orderSlice = createSlice({
@@ -25,9 +35,16 @@ export const orderSlice = createSlice({
 		setFilters: (state, action: PayloadAction<IStateFilter>) => {
 			state.filters = action.payload;
 		},
+
+		setMessage: (
+			state,
+			action: PayloadAction<{ status: boolean; message: string; color: string }>
+		) => {
+			state.message = action.payload;
+		},
 	},
 });
 
-export const { setFilters } = orderSlice.actions;
+export const { setFilters, setMessage } = orderSlice.actions;
 
 export default orderSlice.reducer;

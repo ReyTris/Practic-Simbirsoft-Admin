@@ -81,12 +81,8 @@ export const EntitiesService = {
 			});
 
 			if (response.status === 200) {
-				return { success: true, message: 'Car deleted successfully' };
+				return { success: true, message: 'Машина успешно удалена' };
 			} else {
-				return {
-					success: false,
-					message: `Нельзя удалить запись, так как существует заказ с данным автомобилем`,
-				};
 			}
 		} catch (error) {
 			return {

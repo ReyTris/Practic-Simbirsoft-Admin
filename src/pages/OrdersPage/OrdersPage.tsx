@@ -15,7 +15,7 @@ import {
 	IOrderStatus,
 } from '@/models/entities/IEntitiesService';
 import { useAppDispatch, useAppSelector } from '@/hooks/useDispatch';
-import { setFilters } from '@/store/OrderSlice';
+import { setFilters, setMessage } from '@/store/OrderSlice';
 import Loader from '@/components/ui/Loader';
 export const OrdersPage = () => {
 	const [page, setPage] = useState(1);
@@ -151,6 +151,7 @@ export const OrdersPage = () => {
 			filters.orderStatusId
 		);
 		fetchEntities();
+		dispatch(setMessage({ message: '', status: false, color: '' }));
 	}, [page]);
 	return (
 		<>

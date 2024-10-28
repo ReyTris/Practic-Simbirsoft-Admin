@@ -6,6 +6,8 @@ import { refreshToken } from '@/store/userSlice';
 import Header from './Header';
 import Footer from './Footer';
 import Loader from '../ui/Loader';
+import Message from '../Message';
+import { setMessage } from '@/store/OrderSlice';
 
 export const Layout = () => {
 	const navigate = useNavigate();
@@ -13,6 +15,7 @@ export const Layout = () => {
 
 	const { isLoading } = useAppSelector((state) => state.user);
 	const dispatch = useAppDispatch();
+	const state = useAppSelector((state) => state.order);
 
 	useEffect(() => {
 		setLoading(isLoading);
@@ -39,7 +42,12 @@ export const Layout = () => {
 			<Sidebar />
 			<div className="flex flex-col flex-grow w-wrapper">
 				<Header />
-				<div className="overflow-auto p-7 max-lg:p-4 bg-[#F5F6F8]">
+				<div className="relative overflow-auto p-7 max-lg:p-4 bg-[#F5F6F8]">
+					<Message
+						state={state.message.status}
+						message={state.message.message}
+						bgColor={state.message.color}
+					/>
 					<Outlet />
 				</div>
 				<Footer />

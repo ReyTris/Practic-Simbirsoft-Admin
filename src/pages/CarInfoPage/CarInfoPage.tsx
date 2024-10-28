@@ -1,8 +1,10 @@
 import { defaultCarData } from '@/constants/default-car-data';
 import { convertImageToBase64 } from '@/features/convertToBase64';
+import { useAppDispatch } from '@/hooks/useDispatch';
 import { ICarIdData } from '@/models/entities/IEntitiesService';
 import { PathNames } from '@/router/pathNames';
 import { EntitiesService } from '@/services/entities.service';
+import { setMessage } from '@/store/OrderSlice';
 import { Button, Checkbox, ConfigProvider, Progress } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -12,9 +14,9 @@ export const CarInfoPage = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
-	const [message, setMessage] = useState('');
+	const dispatch = useAppDispatch();
 
-	console.log(message);
+	dispatch(setMessage({ message: '', status: false, color: '' }));
 
 	const [data, setData] = useState<ICarIdData>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -76,12 +78,23 @@ export const CarInfoPage = () => {
 			if (result.success) {
 				setTimeout(() => {
 					navigate(`/${PathNames.CAR_INFO_PAGE}`);
+					dispatch(setMessage({ message: '', status: false, color: '' }));
 				}, 1500);
-			}
 
-			setMessage(result.message);
+				dispatch(
+					setMessage({
+						message: result.message,
+						status: true,
+						color: '#0EC261',
+					})
+				);
+			} else {
+				dispatch(
+					setMessage({ message: result.message, status: true, color: 'red' })
+				);
+			}
 		} catch (error) {
-			console.error(error);
+			dispatch(setMessage({ message: error, status: true, color: 'red' }));
 		}
 	};
 
@@ -106,7 +119,13 @@ export const CarInfoPage = () => {
 					colors: checkedColors,
 				};
 				const result = await EntitiesService.updateCar(Number(id), updatedBody);
-				setMessage(result.message);
+				dispatch(
+					setMessage({
+						message: result.message,
+						status: true,
+						color: '#0EC261',
+					})
+				);
 			} else {
 				const createBody = {
 					...data,
@@ -117,15 +136,23 @@ export const CarInfoPage = () => {
 				delete createBody.id;
 
 				const result = await EntitiesService.createCar(createBody);
-				setMessage(result.message);
+				dispatch(
+					setMessage({
+						message: result.message,
+						status: true,
+						color: '#0EC261',
+					})
+				);
 				if (result.success) {
 					setTimeout(() => {
 						navigate(`/${PathNames.CAR_INFO_PAGE}/${result.id}`);
+						dispatch(setMessage({ message: '', status: false, color: '' }));
 					}, 1500);
 				}
 			}
 		} catch (error) {
 			console.error(error);
+			dispatch(setMessage({ message: error, status: true, color: 'red' }));
 		}
 	};
 
@@ -211,7 +238,7 @@ export const CarInfoPage = () => {
 										/>
 									</div>
 								) : (
-									<div className="flex items-center justify-center text-[200px]">
+									<div className="flex items-center justify-center text-[100px]">
 										?
 									</div>
 								)}

@@ -2,13 +2,19 @@ import cn from 'classnames';
 
 interface IMessageProps {
 	message: string;
-	type: string;
+	bgColor: string;
 	state: boolean;
 }
-const Message = ({ message, type, state }: IMessageProps) => {
+export const Message = ({ message, bgColor, state }: IMessageProps) => {
 	return (
-		<div className={cn('w-full h-[30px]', state ? 'block' : 'hidden')}></div>
+		<div
+			className={cn(
+				'w-full text-white absolute top-0 left-0 px-7 py-4',
+				state ? 'block' : 'hidden'
+			)}
+			style={{ backgroundColor: bgColor }}
+		>
+			{message}
+		</div>
 	);
 };
-
-export default Message;
