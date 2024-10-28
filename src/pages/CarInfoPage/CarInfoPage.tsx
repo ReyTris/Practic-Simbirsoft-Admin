@@ -1,3 +1,5 @@
+import { defaultCarData } from '@/constants/default-car-data';
+import { convertImageToBase64 } from '@/features/convertToBase64';
 import { ICarIdData } from '@/models/entities/IEntitiesService';
 import { PathNames } from '@/router/pathNames';
 import { EntitiesService } from '@/services/entities.service';
@@ -6,25 +8,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate, useParams } from 'react-router-dom';
 
-interface ICarInfo {
-	name: string;
-	categoryId: {
-		name: string;
-	};
-	description: string;
-	colors: string[];
-	thumbnail: {
-		path: string;
-	};
-}
-
 export const CarInfoPage = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	var _ = require('lodash');
 
 	const [message, setMessage] = useState('');
-	const [reqStatus, setReqStatus] = useState(false);
+
 	console.log(message);
 
 	const [data, setData] = useState<ICarIdData>(null);
@@ -34,17 +23,30 @@ export const CarInfoPage = () => {
 
 	const colorRef = useRef<string>(null);
 
-	const [carInfo, setCarInfo] = useState<ICarInfo>({
-		name: '',
-		categoryId: {
-			name: '',
-		},
-		description: '',
-		colors: [''],
-		thumbnail: {
-			path: '',
-		},
-	});
+	const [carInfo, setCarInfo] = useState<ICarIdData>(defaultCarData);
+
+	const calculateProgress = () => {
+		const requiredFields = [
+			'name',
+			'categoryId.name',
+			'description',
+			'colors',
+			'thumbnail.path',
+		];
+		const filledFields = requiredFields.filter((field) => {
+			if (field.includes('.')) {
+				const [parentField, childField] = field.split('.');
+				return carInfo[parentField] && carInfo[parentField][childField] !== '';
+			} else if (Array.isArray(carInfo[field])) {
+				return carInfo[field].length > 0;
+			} else {
+				return carInfo[field] !== '';
+			}
+		});
+
+		const progress = (filledFields.length / requiredFields.length) * 100;
+		return progress;
+	};
 
 	console.log(carInfo);
 	console.log(data);
@@ -58,7 +60,10 @@ export const CarInfoPage = () => {
 	};
 
 	const handleTypeChange = (value: string) => {
-		setCarInfo((prev) => ({ ...prev, categoryId: { name: value } }));
+		setCarInfo((prev) => ({
+			...prev,
+			categoryId: { ...prev.categoryId, name: value },
+		}));
 	};
 
 	const handleDescriptionChange = (value: string) => {
@@ -76,59 +81,83 @@ export const CarInfoPage = () => {
 
 			setMessage(result.message);
 		} catch (error) {
-			if (error.includes('referenced from table')) {
-				console.error(error);
-			}
+			console.error(error);
+		}
+	};
+
+	const handleAddColor = () => {
+		const newColor = colorRef.current;
+		if (newColor && !carInfo.colors.includes(newColor)) {
+			setCarInfo((prev) => ({
+				...prev,
+				colors: [...prev.colors, newColor],
+			}));
+			setCheckedColors((prev) => [...prev, newColor]);
+			colorRef.current = '';
 		}
 	};
 
 	const handleUpdateCar = async () => {
 		try {
-			const updatedBody = _.merge(data, carInfo);
+			if (id) {
+				const updatedBody = {
+					...data,
+					...carInfo,
+					colors: checkedColors,
+				};
+				const result = await EntitiesService.updateCar(Number(id), updatedBody);
+				setMessage(result.message);
+			} else {
+				const createBody = {
+					...data,
+					...carInfo,
+					colors: checkedColors,
+				};
 
-			const result = await EntitiesService.updateCar(Number(id), updatedBody);
-			setMessage(result.message);
-		} catch (error) {}
+				delete createBody.id;
+
+				const result = await EntitiesService.createCar(createBody);
+				setMessage(result.message);
+				if (result.success) {
+					setTimeout(() => {
+						navigate(`/${PathNames.CAR_INFO_PAGE}/${result.id}`);
+					}, 1500);
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleFileUpload = async (file: File) => {
+		try {
+			const base64String = await convertImageToBase64(file);
+			return base64String;
+		} catch (error) {
+			console.error('Ошибка конвертации изображения:', error);
+		}
+	};
+
+	const handleFileUploadAndSetImage = async (file: File) => {
+		const base64String = await handleFileUpload(file);
+		setCarInfo((prev) => ({
+			...prev,
+			thumbnail: {
+				path: base64String,
+			},
+		}));
 	};
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop: (acceptedFiles) => {
-			console.log(acceptedFiles[0]);
-
 			setImage(acceptedFiles[0]);
-			setCarInfo((prev) => ({
-				...prev,
-				thumbnail: {
-					path: acceptedFiles[0].name,
-				},
-			}));
+			handleFileUploadAndSetImage(acceptedFiles[0]);
 		},
 	});
 
-	const handleAddColor = () => {
-		setCarInfo((prev) => ({
-			...prev,
-			colors: [...prev.colors, colorRef.current],
-		}));
-
-		setCheckedColors((prev) => {
-			console.log(prev, colorRef.current);
-			return [...prev, colorRef.current];
-		});
-	};
 	useEffect(() => {
 		if (id === undefined) {
-			setCarInfo({
-				name: '',
-				categoryId: {
-					name: '',
-				},
-				description: '',
-				colors: [''],
-				thumbnail: {
-					path: '',
-				},
-			});
+			setCarInfo(defaultCarData);
 			setImage(null);
 			setCheckedColors([]);
 		} else {
@@ -137,30 +166,13 @@ export const CarInfoPage = () => {
 				try {
 					const response = await EntitiesService.getCarOnId(Number(id));
 
-					setCarInfo((prev) => ({
-						...prev,
-						colors:
-							typeof response.colors === 'string'
-								? [response.colors]
-								: response.colors,
-						name: response.name,
-						categoryId: {
-							...prev.categoryId,
-							name: response.categoryId.name,
-						},
-						description: response.description,
-						thumbnail: {
-							path: response.thumbnail.path,
-						},
-					}));
-
-					setCheckedColors(response.colors);
-
-					if (response === null) {
-						navigate('*');
+					if (typeof response.colors === 'string') {
+						response.colors = response.colors.split(',');
 					}
+					setCarInfo(response);
 
-					setCheckedColors((prev) => [...prev, response.colors]);
+					setCheckedColors(response.colors || []);
+
 					setData(response);
 				} catch (error) {
 					setData(null);
@@ -177,8 +189,8 @@ export const CarInfoPage = () => {
 			<h2 className="text-[29px] font-normal text-[#3D5170]">
 				Карточка автомобиля
 			</h2>
-			<div className="mt-8 flex gap-7 h-[calc(100vh_-_300px)] max-md:flex-col">
-				<div className="rounded-lg shadow-2xl w-[330px] max-md:w-full p-6 flex flex-col gap-5 max-md:flex-row bg-white">
+			<div className="mt-8 flex gap-7 h-[calc(100vh_-_300px)] max-xl:flex-col">
+				<div className="rounded-lg shadow-2xl w-[330px] max-xl:w-full p-6 flex flex-col gap-5 bg-white">
 					<div className="">
 						<div className="py-5">
 							<div className="">
@@ -204,7 +216,9 @@ export const CarInfoPage = () => {
 									</div>
 								)}
 
-								<div className="text-center text-[24px]">Name car</div>
+								<div className="text-center text-[24px]">
+									{carInfo.name || 'Новый автомобиль'}
+								</div>
 							</div>
 
 							<div {...getRootProps()} className="dropzone">
@@ -219,6 +233,7 @@ export const CarInfoPage = () => {
 												className="p-2 outline-none"
 												type="text"
 												placeholder="Выберите файл"
+												value={image ? image.name : ''}
 											/>
 											<button className="p-2 bg-[#E9ECEF] border-[#BECAD6] border-l-[0.5px] flex-1">
 												Обзор
@@ -231,16 +246,16 @@ export const CarInfoPage = () => {
 
 						<div className="py-4 border-t border-[#BECAD6]">
 							<span className="text-[#868E96]">Заполнено</span>
-							<Progress percent={50} />
+							<Progress percent={calculateProgress()} />
 						</div>
 					</div>
-					<div className="py-4 border-t border-[#BECAD6]">
+					<div className="py-4 border-t border-[#BECAD6] bg-white">
 						<span className="text-[#868E96]">Описание</span>
 						<textarea
 							className="mt-3 outline-none resize-none"
 							name=""
 							id=""
-							rows={10}
+							rows={5}
 							cols={30}
 							onChange={(e) => handleDescriptionChange(e.target.value)}
 							value={carInfo.description}
@@ -251,7 +266,7 @@ export const CarInfoPage = () => {
 					<h3 className="text-[#3D5170] text-[17px] font-medium">
 						Настройка автомобиля
 					</h3>
-					<div className="grid grid-cols-2 gap-5 mt-7">
+					<div className="grid grid-cols-2 gap-5 max-md:grid-cols-1 mt-7">
 						<div className="">
 							<div className="text-[12px]">Модель автомобиля</div>
 							<div className="mt-1 flex rounded border-[0.5px] border-[#BECAD6]">
@@ -292,18 +307,14 @@ export const CarInfoPage = () => {
 							<div className="flex flex-col">
 								{carInfo.colors.map((color, id) => (
 									<Checkbox
-										className="custom-checkbox mt-2"
-										value={color}
 										key={id}
 										checked={checkedColors.includes(color)}
 										onChange={() => {
-											if (checkedColors.includes(color)) {
-												setCheckedColors(
-													checkedColors.filter((c) => c !== color)
-												);
-											} else {
-												setCheckedColors([...checkedColors, color]);
-											}
+											setCheckedColors((prev) =>
+												prev.includes(color)
+													? prev.filter((c) => c !== color)
+													: [...prev, color]
+											);
 										}}
 									>
 										{color}
@@ -316,7 +327,12 @@ export const CarInfoPage = () => {
 						<Button type="primary" onClick={handleUpdateCar}>
 							Сохранить
 						</Button>
-						<Button type="default" onClick={() => {}}>
+						<Button
+							type="default"
+							onClick={() => {
+								window.history.back();
+							}}
+						>
 							Отменить
 						</Button>
 

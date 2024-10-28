@@ -115,4 +115,33 @@ export const EntitiesService = {
 			};
 		}
 	},
+	async createCar(data: ICarIdData) {
+		try {
+			const response = await $api.post(`/db/car`, data, {
+				headers: {
+					Authorization: `Basic ${localStorage.getItem('accessToken')}`,
+				},
+			});
+
+			console.log(response);
+
+			if (response.status === 201) {
+				return {
+					success: true,
+					message: 'Машина успешно Создана',
+					id: response.data.data.id,
+				};
+			} else {
+				return {
+					success: false,
+					message: `Нельзя создать машину`,
+				};
+			}
+		} catch (error) {
+			return {
+				success: false,
+				message: error,
+			};
+		}
+	},
 };

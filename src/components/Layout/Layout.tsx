@@ -39,7 +39,7 @@ export const Layout = () => {
 			<Sidebar />
 			<div className="flex flex-col flex-grow w-wrapper">
 				<Header />
-				<div className="p-7 max-lg:p-4 bg-[#F5F6F8]">
+				<div className="overflow-auto p-7 max-lg:p-4 bg-[#F5F6F8]">
 					<Outlet />
 				</div>
 				<Footer />
