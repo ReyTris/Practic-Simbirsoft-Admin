@@ -9,6 +9,7 @@ import { Button, Checkbox, ConfigProvider, Progress } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate, useParams } from 'react-router-dom';
+import cn from 'classnames';
 
 export const CarInfoPage = () => {
 	const { id } = useParams();
@@ -19,7 +20,7 @@ export const CarInfoPage = () => {
 	dispatch(setMessage({ message: '', status: false, color: '' }));
 
 	const [data, setData] = useState<ICarIdData>(null);
-	const [isLoading, setIsLoading] = useState(false);
+	// const [isLoading, setIsLoading] = useState(false);
 	const [image, setImage] = useState(null);
 	const [checkedColors, setCheckedColors] = useState([]);
 
@@ -189,7 +190,6 @@ export const CarInfoPage = () => {
 			setCheckedColors([]);
 		} else {
 			const fetchData = async () => {
-				setIsLoading(true);
 				try {
 					const response = await EntitiesService.getCarOnId(Number(id));
 
@@ -203,8 +203,6 @@ export const CarInfoPage = () => {
 					setData(response);
 				} catch (error) {
 					setData(null);
-				} finally {
-					setIsLoading(false);
 				}
 			};
 			fetchData();
