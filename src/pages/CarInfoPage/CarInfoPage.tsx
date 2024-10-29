@@ -222,7 +222,7 @@ export const CarInfoPage = () => {
 								{image ? (
 									<div className="w-full">
 										<img
-											className="w-full object-cover"
+											className="w-full object-cover max-h-[170px]"
 											src={URL.createObjectURL(image)}
 											alt="Uploaded image"
 										/>
@@ -230,7 +230,7 @@ export const CarInfoPage = () => {
 								) : carInfo.thumbnail.path ? (
 									<div className="w-full">
 										<img
-											className="w-full object-cover"
+											className="w-full object-cover max-h-[170px]"
 											src={carInfo.thumbnail.path}
 											alt="Uploaded image"
 										/>
@@ -280,7 +280,7 @@ export const CarInfoPage = () => {
 							className="mt-3 outline-none resize-none"
 							name=""
 							id=""
-							rows={5}
+							rows={4}
 							cols={30}
 							onChange={(e) => handleDescriptionChange(e.target.value)}
 							value={carInfo.description}
