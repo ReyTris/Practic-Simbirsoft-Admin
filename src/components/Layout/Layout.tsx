@@ -13,7 +13,7 @@ export const Layout = () => {
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(true);
 
-	const { isLoading } = useAppSelector((state) => state.user);
+	const { isLoading, isAuth } = useAppSelector((state) => state.user);
 	const dispatch = useAppDispatch();
 	const state = useAppSelector((state) => state.order);
 
@@ -22,9 +22,11 @@ export const Layout = () => {
 	}, [isLoading]);
 
 	useEffect(() => {
-		if (localStorage.getItem('refreshToken')) {
+		if (localStorage.getItem('accessToken')) {
 			dispatch(refreshToken());
-		} else {
+		}
+
+		if (!isAuth) {
 			navigate('/auth/login');
 		}
 	}, [dispatch, navigate]);

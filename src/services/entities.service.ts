@@ -23,62 +23,38 @@ export const EntitiesService = {
 			}${carId ? `&carId=${carId}` : ''}${
 				orderStatusId ? `&orderStatusId=${orderStatusId}` : ''
 			}`,
-			{
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-				},
-			}
+			{}
 		);
 		return response.data;
 	},
 
 	async getOrderStatus(): Promise<IOrderStatus> {
-		const response: AxiosResponse<any> = await $api.get(`/db/orderStatus`, {
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-			},
-		});
+		const response: AxiosResponse<any> = await $api.get(`/db/orderStatus`, {});
 
 		return response.data;
 	},
 
 	async getCarId(): Promise<ICarId> {
-		const response: AxiosResponse<any> = await $api.get(`/db/car`, {
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-			},
-		});
+		const response: AxiosResponse<any> = await $api.get(`/db/car`, {});
 
 		return response.data;
 	},
 
 	async getCityId(): Promise<ICities> {
-		const response: AxiosResponse<any> = await $api.get(`/db/city`, {
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-			},
-		});
+		const response: AxiosResponse<any> = await $api.get(`/db/city`, {});
 
 		return response.data;
 	},
 
 	async getCarOnId(id: number): Promise<ICarIdData> {
-		const response: AxiosResponse<any> = await $api.get(`/db/car/${id}`, {
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-			},
-		});
+		const response: AxiosResponse<any> = await $api.get(`/db/car/${id}`, {});
 
 		return response.data.data;
 	},
 
 	async deleteCar(id: number) {
 		try {
-			const response = await $api.delete(`/db/car/${id}`, {
-				headers: {
-					Authorization: `Basic ${localStorage.getItem('accessToken')}`,
-				},
-			});
+			const response = await $api.delete(`/db/car/${id}`, {});
 
 			if (response.status === 200) {
 				return { success: true, message: 'Машина успешно удалена' };
@@ -94,11 +70,7 @@ export const EntitiesService = {
 
 	async updateCar(id: number, data: ICarIdData) {
 		try {
-			const response = await $api.put(`/db/car/${id}`, data, {
-				headers: {
-					Authorization: `Basic ${localStorage.getItem('accessToken')}`,
-				},
-			});
+			const response = await $api.put(`/db/car/${id}`, data, {});
 
 			if (response.status === 200) {
 				return { success: true, message: 'Машина успешно обновлена' };
@@ -113,11 +85,7 @@ export const EntitiesService = {
 	},
 	async createCar(data: ICarIdData) {
 		try {
-			const response = await $api.post(`/db/car`, data, {
-				headers: {
-					Authorization: `Basic ${localStorage.getItem('accessToken')}`,
-				},
-			});
+			const response = await $api.post(`/db/car`, data, {});
 
 			console.log(response);
 

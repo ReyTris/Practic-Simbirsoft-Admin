@@ -13,9 +13,9 @@ const items: MenuProps['items'] = [
 	{
 		label: 'Выйти',
 		key: '0',
-		//   onClick: () => {
-		// 	  AuthService.logout()
-		//   }
+		onClick: () => {
+			AuthService.logout();
+		},
 	},
 ];
 
