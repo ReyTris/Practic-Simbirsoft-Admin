@@ -158,8 +158,8 @@ export const OrdersPage = () => {
 			<h2 className="text-[29px] max-lg:text-[20px] font-normal text-[#3D5170]">
 				Заказы
 			</h2>
-			<div className="h-[calc(100vh_-_300px)] overflow-hidden overflow-y-auto mt-8 max-lg:mt-4 rounded-lg shadow-2xl">
-				<div className="py-4 px-5 flex justify-between">
+			<div className="relative h-[calc(100vh_-_300px)] overflow-hidden overflow-y-auto mt-8 max-lg:mt-4 rounded-lg shadow-2xl">
+				<div className="py-4 px-5 flex justify-between sticky top-0 bg-[#F5F6F8] w-full">
 					<div className="">
 						<Select
 							value={orderFilters.cityId}
@@ -265,7 +265,7 @@ export const OrdersPage = () => {
 						onChange={(page) => {
 							setPage(page);
 						}}
-						className="py-[21px] border-t-[1px] border-[#E5E5E5] text-center"
+						className="py-[21px] border-t-[1px] border-[#E5E5E5] text-center sticky bottom-0 bg-[#F5F6F8]"
 						itemRender={itemRender}
 						onShowSizeChange={onShowSizeChange}
 					/>

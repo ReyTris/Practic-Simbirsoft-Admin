@@ -82,7 +82,7 @@ export default (env: EnvVariables) => {
 		},
 		devtool: 'inline-source-map',
 		devServer: {
-			port: env.port ?? 3000,
+			port: env.port ?? 5000,
 			open: ['/Practic-Simbirsoft-Admin/'],
 			historyApiFallback: true,
 		},

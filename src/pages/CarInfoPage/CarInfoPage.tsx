@@ -20,7 +20,6 @@ export const CarInfoPage = () => {
 	dispatch(setMessage({ message: '', status: false, color: '' }));
 
 	const [data, setData] = useState<ICarIdData>(null);
-	// const [isLoading, setIsLoading] = useState(false);
 	const [image, setImage] = useState(null);
 	const [checkedColors, setCheckedColors] = useState([]);
 
@@ -50,10 +49,6 @@ export const CarInfoPage = () => {
 		const progress = (filledFields.length / requiredFields.length) * 100;
 		return progress;
 	};
-
-	console.log(carInfo);
-	console.log(data);
-
 	const handleColorChange = (value: string) => {
 		colorRef.current = value;
 	};
@@ -113,13 +108,13 @@ export const CarInfoPage = () => {
 
 	const handleUpdateCar = async () => {
 		try {
+			const body = {
+				...data,
+				...carInfo,
+				colors: checkedColors,
+			};
 			if (id) {
-				const updatedBody = {
-					...data,
-					...carInfo,
-					colors: checkedColors,
-				};
-				const result = await EntitiesService.updateCar(Number(id), updatedBody);
+				const result = await EntitiesService.updateCar(Number(id), body);
 				dispatch(
 					setMessage({
 						message: result.message,
@@ -128,15 +123,9 @@ export const CarInfoPage = () => {
 					})
 				);
 			} else {
-				const createBody = {
-					...data,
-					...carInfo,
-					colors: checkedColors,
-				};
+				delete body.id;
 
-				delete createBody.id;
-
-				const result = await EntitiesService.createCar(createBody);
+				const result = await EntitiesService.createCar(body);
 				dispatch(
 					setMessage({
 						message: result.message,

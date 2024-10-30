@@ -1,4 +1,6 @@
-export const defaultCarData = {
+import { ICarIdData } from '@/models/entities/IEntitiesService';
+
+export const defaultCarData: ICarIdData = {
 	id: 0,
 	priceMax: 0,
 	priceMin: 0,

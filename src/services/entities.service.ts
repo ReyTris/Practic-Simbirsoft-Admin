@@ -17,48 +17,49 @@ export const EntitiesService = {
 		carId?: number,
 		orderStatusId?: number
 	): Promise<IEntitiesService> {
-		const response: AxiosResponse<any> = await $api.get(
-			`/db/order?page=${page}&limit=${limit}${
-				cityId ? `&cityId=${cityId}` : ''
-			}${carId ? `&carId=${carId}` : ''}${
-				orderStatusId ? `&orderStatusId=${orderStatusId}` : ''
-			}`,
-			{}
-		);
+		const params = {
+			page,
+			limit,
+			cityId,
+			carId,
+			orderStatusId,
+		};
+		const response: AxiosResponse<any> = await $api.get(`/db/order`, {
+			params,
+		});
 		return response.data;
 	},
 
 	async getOrderStatus(): Promise<IOrderStatus> {
-		const response: AxiosResponse<any> = await $api.get(`/db/orderStatus`, {});
+		const response: AxiosResponse<any> = await $api.get(`/db/orderStatus`);
 
 		return response.data;
 	},
 
 	async getCarId(): Promise<ICarId> {
-		const response: AxiosResponse<any> = await $api.get(`/db/car`, {});
+		const response: AxiosResponse<any> = await $api.get(`/db/car`);
 
 		return response.data;
 	},
 
 	async getCityId(): Promise<ICities> {
-		const response: AxiosResponse<any> = await $api.get(`/db/city`, {});
+		const response: AxiosResponse<any> = await $api.get(`/db/city`);
 
 		return response.data;
 	},
 
 	async getCarOnId(id: number): Promise<ICarIdData> {
-		const response: AxiosResponse<any> = await $api.get(`/db/car/${id}`, {});
+		const response: AxiosResponse<any> = await $api.get(`/db/car/${id}`);
 
 		return response.data.data;
 	},
 
 	async deleteCar(id: number) {
 		try {
-			const response = await $api.delete(`/db/car/${id}`, {});
+			const response = await $api.delete(`/db/car/${id}`);
 
 			if (response.status === 200) {
 				return { success: true, message: 'Машина успешно удалена' };
-			} else {
 			}
 		} catch (error) {
 			return {
@@ -70,11 +71,10 @@ export const EntitiesService = {
 
 	async updateCar(id: number, data: ICarIdData) {
 		try {
-			const response = await $api.put(`/db/car/${id}`, data, {});
+			const response = await $api.put(`/db/car/${id}`, data);
 
 			if (response.status === 200) {
 				return { success: true, message: 'Машина успешно обновлена' };
-			} else {
 			}
 		} catch (error) {
 			return {
@@ -85,9 +85,7 @@ export const EntitiesService = {
 	},
 	async createCar(data: ICarIdData) {
 		try {
-			const response = await $api.post(`/db/car`, data, {});
-
-			console.log(response);
+			const response = await $api.post(`/db/car`, data);
 
 			if (response.status === 201) {
 				return {
