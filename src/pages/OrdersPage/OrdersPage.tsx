@@ -17,6 +17,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/hooks/useDispatch';
 import { setFilters, setMessage } from '@/store/OrderSlice';
 import Loader from '@/components/ui/Loader';
+import Filter from './components/Filter';
 export const OrdersPage = () => {
 	const [page, setPage] = useState(1);
 
@@ -142,89 +143,13 @@ export const OrdersPage = () => {
 				Заказы
 			</h2>
 			<div className="relative h-[calc(100vh_-_300px)] overflow-hidden overflow-y-auto mt-8 max-lg:mt-4 rounded-lg shadow-2xl">
-				<div className="py-4 px-5 flex justify-between sticky top-0 bg-[#F5F6F8] w-full">
-					<div>
-						<Select
-							value={filters.cityId}
-							onChange={(value) => {
-								dispatch(setFilters({ ...filters, cityId: value }));
-							}}
-							placeholder="Город"
-							style={{ width: 120 }}
-							className="ml-4"
-						>
-							{cities.data.map((city) => (
-								<Select.Option key={city.id} value={city.id}>
-									{city.name}
-								</Select.Option>
-							))}
-						</Select>
-						<Select
-							value={filters.orderStatusId}
-							onChange={(value) => {
-								dispatch(setFilters({ ...filters, orderStatusId: value }));
-							}}
-							placeholder="Статус"
-							style={{ width: 120 }}
-							className="ml-4"
-						>
-							{orderStatus.data.map((status) => (
-								<Select.Option key={status.id} value={status.id}>
-									{status.name}
-								</Select.Option>
-							))}
-						</Select>
-						<Select
-							value={filters.carId}
-							onChange={(value) => {
-								dispatch(setFilters({ ...filters, carId: value }));
-							}}
-							placeholder="Марка"
-							style={{ width: 120 }}
-							className="ml-4"
-						>
-							{cars.data.map((car) => (
-								<Select.Option key={car.id} value={car.id}>
-									{car.name}
-								</Select.Option>
-							))}
-						</Select>
-					</div>
-					<div className="ml-auto">
-						<ConfigProvider
-							theme={{
-								components: {
-									Button: {
-										defaultHoverBg: 'rgb(240 57 57)',
-										defaultHoverBorderColor: 'red-400',
-										defaultHoverColor: 'white',
-									},
-								},
-							}}
-						>
-							<Button
-								type="default"
-								className="bg-red-600 text-white mr-4"
-								onClick={handleClearFilters}
-								disabled={
-									!filters.cityId && !filters.carId && !filters.orderStatusId
-								}
-							>
-								Отменить
-							</Button>
-						</ConfigProvider>
-
-						<Button
-							type="primary"
-							onClick={handleApplyFilters}
-							disabled={
-								!filters.cityId && !filters.carId && !filters.orderStatusId
-							}
-						>
-							Применить
-						</Button>
-					</div>
-				</div>
+				<Filter
+					cities={cities}
+					cars={cars}
+					orderStatus={orderStatus}
+					handleApplyFilters={handleApplyFilters}
+					handleClearFilters={handleClearFilters}
+				/>
 				<div className="">
 					{isLoading ? (
 						<div className="flex items-center justify-center py-14">
