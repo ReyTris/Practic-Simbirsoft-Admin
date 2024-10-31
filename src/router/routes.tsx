@@ -6,6 +6,7 @@ import Login from '@/pages/AuthPage/components/Login';
 import OrdersPage from '@/pages/OrdersPage';
 import CarInfoPage from '@/pages/CarInfoPage';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
+import ListCarsPage from '@/pages/ListCarsPage';
 
 const routes = createHashRouter([
 	{
@@ -17,6 +18,10 @@ const routes = createHashRouter([
 			{
 				path: `${PathNames.CAR_INFO_PAGE}/:id?`,
 				element: <CarInfoPage />,
+			},
+			{
+				path: `${PathNames.LIST_CARS_PAGE}`,
+				element: <ListCarsPage />,
 			},
 			{
 				path: '*',

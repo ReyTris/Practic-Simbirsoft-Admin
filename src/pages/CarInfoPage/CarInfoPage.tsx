@@ -9,7 +9,6 @@ import { Button, Checkbox, ConfigProvider, Progress } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate, useParams } from 'react-router-dom';
-import cn from 'classnames';
 
 export const CarInfoPage = () => {
 	const { id } = useParams();
@@ -198,13 +197,13 @@ export const CarInfoPage = () => {
 	}, [id]);
 
 	return (
-		<div className="">
+		<div>
 			<h2 className="text-[29px] font-normal text-[#3D5170]">
 				Карточка автомобиля
 			</h2>
 			<div className="mt-8 flex gap-7 h-[calc(100vh_-_300px)] max-xl:flex-col">
 				<div className="rounded-lg shadow-2xl w-[330px] max-xl:w-full p-6 flex flex-col gap-5 bg-white">
-					<div className="">
+					<div>
 						<div className="py-5">
 							<div className="">
 								{image ? (
@@ -262,7 +261,7 @@ export const CarInfoPage = () => {
 							<Progress percent={calculateProgress()} />
 						</div>
 					</div>
-					<div className="py-4 border-t border-[#BECAD6] bg-white">
+					<div className="flex flex-col py-4 border-t border-[#BECAD6] bg-white overflow-hidden max-xl:w-full">
 						<span className="text-[#868E96]">Описание</span>
 						<textarea
 							className="mt-3 outline-none resize-none"
@@ -317,7 +316,7 @@ export const CarInfoPage = () => {
 									+
 								</button>
 							</div>
-							<div className="flex flex-col">
+							<div className="flex flex-col mt-5">
 								{carInfo.colors.map((color, id) => (
 									<Checkbox
 										key={id}
@@ -336,7 +335,7 @@ export const CarInfoPage = () => {
 							</div>
 						</div>
 					</div>
-					<div className="mt-auto flex gap-3">
+					<div className="mt-auto max-xl:mt-5 flex gap-3">
 						<Button type="primary" onClick={handleUpdateCar}>
 							Сохранить
 						</Button>

@@ -26,6 +26,9 @@ const Filter = ({
 
 	const { filters } = useAppSelector((state) => state.order);
 
+	const buttonActive = () =>
+		!filters.cityId && !filters.carId && !filters.orderStatusId;
+
 	return (
 		<div className="py-4 px-5 flex justify-between sticky top-0 bg-[#F5F6F8] w-full">
 			<div>
@@ -91,9 +94,7 @@ const Filter = ({
 						type="default"
 						className="bg-red-600 text-white mr-4"
 						onClick={handleClearFilters}
-						disabled={
-							!filters.cityId && !filters.carId && !filters.orderStatusId
-						}
+						disabled={buttonActive()}
 					>
 						Отменить
 					</Button>
@@ -102,7 +103,7 @@ const Filter = ({
 				<Button
 					type="primary"
 					onClick={handleApplyFilters}
-					disabled={!filters.cityId && !filters.carId && !filters.orderStatusId}
+					disabled={buttonActive()}
 				>
 					Применить
 				</Button>

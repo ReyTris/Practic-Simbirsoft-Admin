@@ -7,7 +7,6 @@ import Header from './Header';
 import Footer from './Footer';
 import Loader from '../ui/Loader';
 import Message from '../Message';
-import { setMessage } from '@/store/OrderSlice';
 
 export const Layout = () => {
 	const navigate = useNavigate();

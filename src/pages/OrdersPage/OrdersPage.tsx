@@ -1,11 +1,5 @@
 import { EntitiesService } from '@/services/entities.service';
-import {
-	Button,
-	ConfigProvider,
-	Pagination,
-	PaginationProps,
-	Select,
-} from 'antd';
+import { Pagination, PaginationProps } from 'antd';
 import { useEffect, useState } from 'react';
 import OrderItem from './components/OrderItem';
 import {

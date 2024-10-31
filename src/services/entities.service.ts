@@ -54,6 +54,16 @@ export const EntitiesService = {
 		return response.data.data;
 	},
 
+	async getCars(page: number, limit: number): Promise<ICarId> {
+		const params = {
+			page,
+			limit,
+		};
+		const response: AxiosResponse<any> = await $api.get(`/db/car`, { params });
+
+		return response.data;
+	},
+
 	async deleteCar(id: number) {
 		try {
 			const response = await $api.delete(`/db/car/${id}`);

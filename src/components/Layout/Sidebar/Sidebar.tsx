@@ -1,7 +1,7 @@
-import { LinkOutlined } from '@ant-design/icons';
+import { ApartmentOutlined } from '@ant-design/icons';
 import { ConfigProvider, Menu } from 'antd';
 import type { GetProp, MenuProps } from 'antd';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { PathNames } from '@/router/pathNames';
 import { getLastPathPart } from '@/features/getLastPathPart';
 
@@ -22,6 +22,11 @@ const items: MenuItem[] = [
 		key: PathNames.ORDERS_PAGE,
 		icon: <OrderedListOutlined />,
 		label: 'Заказы',
+	},
+	{
+		key: PathNames.LIST_CARS_PAGE,
+		icon: <ApartmentOutlined />,
+		label: 'Список автомобилей',
 	},
 ];
 

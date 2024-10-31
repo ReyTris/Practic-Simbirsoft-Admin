@@ -108,10 +108,7 @@ const OrderItem = ({ item }: IOrderItemProps) => {
 				<button className="p-2 flex items-center text-[#5A6169] text-[11px] border-gray border-l">
 					<Close /> <span className="ml-1">Отмена</span>
 				</button>
-				<button
-					className="p-2 flex items-center text-[#5A6169] text-[11px] border-gray border-l"
-					onClick={() => handlerClickChange(id)}
-				>
+				<button className="p-2 flex items-center text-[#5A6169] text-[11px] border-gray border-l">
 					<More /> <span className="ml-1">Изменить</span>
 				</button>
 			</div>
