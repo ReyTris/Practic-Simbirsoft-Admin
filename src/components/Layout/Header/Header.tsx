@@ -3,7 +3,7 @@ import { SearchOutlined, DownOutlined } from '@ant-design/icons';
 import cn from 'classnames';
 import Jingle from '@/assets/icons/Notifications.svg';
 import { AuthService } from '@/services/auth.service';
-import { useNavigate } from 'react-router-dom';
+import Avatar from '@/assets/images/user-avatar.png';
 
 interface HeaderProps {
 	className?: string;
@@ -34,8 +34,11 @@ export const Header = ({ className }: HeaderProps) => {
 					className="border-none w-full"
 				/>
 			</div>
-			<div className="flex items-center justify-center w-[70px] p-5 max-md:p-2 border-x border-[#CACEDB]">
+			<div className="relative flex items-center justify-center w-[70px] p-5 max-md:p-2 border-x border-[#CACEDB]">
 				<Jingle className="cursor-pointer" />
+				<div className="w-[10px] h-[10px] bg-[#C4183C] rounded-full absolute top-[32px] right-[17px] flex items-center justify-center">
+					<span className="text-[8px] text-white">4</span>
+				</div>
 			</div>
 			<div className="p-6 max-md:p-2">
 				<Dropdown
@@ -48,7 +51,7 @@ export const Header = ({ className }: HeaderProps) => {
 							<div className="w-[40px] h-[40px] rounded-full max-md:w-[0]">
 								<img
 									className=" w-full h-full object-cover rounded-full"
-									src="../../../assets/images/user-avatar.png"
+									src={Avatar}
 									alt=""
 								/>
 							</div>

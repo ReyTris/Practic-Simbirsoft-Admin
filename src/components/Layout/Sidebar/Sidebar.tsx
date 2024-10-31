@@ -38,7 +38,7 @@ export const Sidebar = () => {
 	return (
 		<div className="w-[300px] max-lg:w-[50px] h-[100vh] flex flex-col items-center shadow-sidebar z-10 bg-white">
 			<div className="h-[70px] w-full flex items-center pl-12">
-				<MainLogo />
+				<MainLogo className="max-lg:hidden" />
 			</div>
 
 			<ConfigProvider
