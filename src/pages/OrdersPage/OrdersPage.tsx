@@ -23,12 +23,6 @@ export const OrdersPage = () => {
 	const [limit, setLimit] = useState(10);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const [orderFilters, setOrderFilters] = useState({
-		cityId: null,
-		carId: null,
-		orderStatusId: null,
-	});
-
 	const [filteredData, setFilteredData] = useState<IEntitiesService>({
 		data: [],
 		count: 0,
@@ -45,18 +39,6 @@ export const OrdersPage = () => {
 
 	const { filters } = useAppSelector((state) => state.order);
 
-	const handleCityChange = (value: number) => {
-		setOrderFilters((prev) => ({ ...prev, cityId: value }));
-	};
-
-	const handleStatusChange = (value: number) => {
-		setOrderFilters((prev) => ({ ...prev, orderStatusId: value }));
-	};
-
-	const handleBrandChange = (value: number) => {
-		setOrderFilters((prev) => ({ ...prev, carId: value }));
-	};
-
 	const handleApplyFilters = async () => {
 		fetchData(
 			page,
@@ -69,7 +51,6 @@ export const OrdersPage = () => {
 
 	const handleClearFilters = () => {
 		dispatch(setFilters({ cityId: null, carId: null, orderStatusId: null }));
-		setOrderFilters({ cityId: null, carId: null, orderStatusId: null });
 		fetchData(page, limit - 1);
 	};
 
@@ -104,6 +85,7 @@ export const OrdersPage = () => {
 			);
 			setFilteredData(response);
 		} catch (error) {
+			console.log(error);
 		} finally {
 			setIsLoading(false);
 		}
@@ -121,6 +103,7 @@ export const OrdersPage = () => {
 			setCars(carId);
 			setCities(cityId);
 		} catch (error) {
+			console.log(error);
 			setOrderStatus({ count: 0, data: [] });
 			setCars({ count: 0, data: [] });
 			setCities({ data: [], count: 0 });
@@ -160,12 +143,11 @@ export const OrdersPage = () => {
 			</h2>
 			<div className="relative h-[calc(100vh_-_300px)] overflow-hidden overflow-y-auto mt-8 max-lg:mt-4 rounded-lg shadow-2xl">
 				<div className="py-4 px-5 flex justify-between sticky top-0 bg-[#F5F6F8] w-full">
-					<div className="">
+					<div>
 						<Select
-							value={orderFilters.cityId}
+							value={filters.cityId}
 							onChange={(value) => {
-								handleCityChange(value);
-								dispatch(setFilters({ ...orderFilters, cityId: value }));
+								dispatch(setFilters({ ...filters, cityId: value }));
 							}}
 							placeholder="Город"
 							style={{ width: 120 }}
@@ -178,10 +160,9 @@ export const OrdersPage = () => {
 							))}
 						</Select>
 						<Select
-							value={orderFilters.orderStatusId}
+							value={filters.orderStatusId}
 							onChange={(value) => {
-								handleStatusChange(value);
-								dispatch(setFilters({ ...orderFilters, orderStatusId: value }));
+								dispatch(setFilters({ ...filters, orderStatusId: value }));
 							}}
 							placeholder="Статус"
 							style={{ width: 120 }}
@@ -194,10 +175,9 @@ export const OrdersPage = () => {
 							))}
 						</Select>
 						<Select
-							value={orderFilters.carId}
+							value={filters.carId}
 							onChange={(value) => {
-								handleBrandChange(value);
-								dispatch(setFilters({ ...orderFilters, carId: value }));
+								dispatch(setFilters({ ...filters, carId: value }));
 							}}
 							placeholder="Марка"
 							style={{ width: 120 }}

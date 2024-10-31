@@ -113,33 +113,32 @@ export const CarInfoPage = () => {
 				...carInfo,
 				colors: checkedColors,
 			};
+
+			let message = '';
+
 			if (id) {
-				const result = await EntitiesService.updateCar(Number(id), body);
-				dispatch(
-					setMessage({
-						message: result.message,
-						status: true,
-						color: '#0EC261',
-					})
-				);
+				const response = await EntitiesService.updateCar(Number(id), body);
+				message = response.message;
 			} else {
 				delete body.id;
 
-				const result = await EntitiesService.createCar(body);
-				dispatch(
-					setMessage({
-						message: result.message,
-						status: true,
-						color: '#0EC261',
-					})
-				);
-				if (result.success) {
+				const response = await EntitiesService.createCar(body);
+				message = response.message;
+				if (response.success) {
 					setTimeout(() => {
-						navigate(`/${PathNames.CAR_INFO_PAGE}/${result.id}`);
+						navigate(`/${PathNames.CAR_INFO_PAGE}/${response.id}`);
 						dispatch(setMessage({ message: '', status: false, color: '' }));
 					}, 1500);
 				}
 			}
+
+			dispatch(
+				setMessage({
+					message: message,
+					status: true,
+					color: '#0EC261',
+				})
+			);
 		} catch (error) {
 			console.error(error);
 			dispatch(setMessage({ message: error, status: true, color: 'red' }));
