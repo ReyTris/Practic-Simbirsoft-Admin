@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { CarService } from '@/services/car.service';
-import { ICar, ICarApiResponse } from '@/services/car.service';
+import { CarService } from '@/services/entities.service';
+import { ICar, ICarApiResponse } from '@/services/entities.service';
 import { radioData } from '@/constants/radioData';
 
 interface IUseCars {

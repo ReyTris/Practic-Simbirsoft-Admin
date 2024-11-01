@@ -1,38 +1,57 @@
-import { PathNames } from '@/router/pathNames';
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { useAppDispatch, useAppSelector } from '@/hooks/useDispatch';
 import { refreshToken } from '@/store/userSlice';
+import Header from './Header';
+import Footer from './Footer';
+import Loader from '../ui/Loader';
+import Message from '../Message';
 
 export const Layout = () => {
-	const navigate = useNavigate()
-	const [loading, setLoading] = useState(true)
+	const navigate = useNavigate();
+	const [loading, setLoading] = useState(true);
 
-	const { isLoading} = useAppSelector(state => state.user)
-	const dispatch = useAppDispatch()
-
-	useEffect(() => {
-		setLoading(isLoading)
-	}, [isLoading])
+	const { isLoading, isAuth } = useAppSelector((state) => state.user);
+	const dispatch = useAppDispatch();
+	const state = useAppSelector((state) => state.order);
 
 	useEffect(() => {
-		if(localStorage.getItem('refreshToken')) {
-			dispatch(refreshToken())
-		} else {
+		setLoading(isLoading);
+	}, [isLoading]);
+
+	useEffect(() => {
+		if (localStorage.getItem('accessToken')) {
+			dispatch(refreshToken());
+		}
+
+		if (!isAuth) {
 			navigate('/auth/login');
 		}
-	}, [ dispatch, navigate])
+	}, [dispatch, navigate]);
 
 	if (loading) {
-		return '...Загрузка'
+		return (
+			<div className="flex items-center justify-center py-14">
+				<Loader />
+			</div>
+		);
 	}
 
 	return (
-		<main className='min-h-[100vh] flex overflow-hidden m-auto'>
-			<Sidebar/>
-			<div className='flex-grow w-wrapper'>
-				<Outlet />
+		<main className="min-h-[100vh] flex  m-auto bg-[#F5F6F8]">
+			<Sidebar />
+			<div className="flex flex-col flex-grow w-wrapper">
+				<Header />
+				<div className="relative overflow-auto p-7 max-lg:p-4 bg-[#F5F6F8]">
+					<Message
+						state={state.message.status}
+						message={state.message.message}
+						bgColor={state.message.color}
+					/>
+					<Outlet />
+				</div>
+				<Footer />
 			</div>
 		</main>
 	);
