@@ -80,7 +80,7 @@ export const OrdersPage = () => {
 			);
 			setFilteredData(response);
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 		} finally {
 			setIsLoading(false);
 		}
@@ -98,7 +98,7 @@ export const OrdersPage = () => {
 			setCars(carId);
 			setCities(cityId);
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			setOrderStatus({ count: 0, data: [] });
 			setCars({ count: 0, data: [] });
 			setCities({ data: [], count: 0 });

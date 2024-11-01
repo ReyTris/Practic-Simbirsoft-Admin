@@ -10,7 +10,6 @@ interface ICarItemProps {
 }
 
 const CarItem = ({ item }: ICarItemProps) => {
-	// const colors = Array.from(new Set(item.colors)).join(', ');
 	const navigate = useNavigate();
 
 	const handlerClickChange = () => {

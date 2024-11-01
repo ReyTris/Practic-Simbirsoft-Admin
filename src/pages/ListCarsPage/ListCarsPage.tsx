@@ -32,9 +32,8 @@ export const ListCarsPage = () => {
 			setIsLoading(true);
 			const response: ICarId = await EntitiesService.getCars(page, limit);
 			setData(response);
-			setIsLoading(false);
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 		} finally {
 			setIsLoading(false);
 		}
